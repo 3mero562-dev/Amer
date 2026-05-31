@@ -4,4 +4,7 @@ app = FastAPI()
 
 @app.get("/")
 def home():
-    return {"status": "working"}
+    return {
+        "status": "working",
+        "message": "AI Bot Ready"
+    }
