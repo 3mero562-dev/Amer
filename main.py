@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request
-import os
 
 app = FastAPI()
 
@@ -70,6 +69,6 @@ async def webhook(request: Request):
         print("MESSAGE =", message_text)
 
     except Exception as e:
-        print("ERROR =", e)
+        print("ERROR =", str(e))
 
     return {"status": "ok"}
