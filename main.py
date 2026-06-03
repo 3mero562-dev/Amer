@@ -61,9 +61,15 @@ async def webhook(request: Request):
     print("===================")
 
     try:
-        message_text = data["entry"][0]["messaging"][0]["message"]["text"]
+        value = data["entry"][0]["changes"][0]["value"]
+
+        sender_id = value["sender"]["id"]
+        message_text = value["message"]["text"]
+
+        print("SENDER =", sender_id)
         print("MESSAGE =", message_text)
-    except:
-        print("NO TEXT FOUND")
+
+    except Exception as e:
+        print("ERROR =", e)
 
     return {"status": "ok"}
