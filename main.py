@@ -59,4 +59,6 @@ async def webhook(request: Request):
     print("New Message:")
     print(data)
 
-    return {"status": "ok"}
+    return {
+        "reply": STORE_INFO
+    }
