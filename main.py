@@ -54,11 +54,11 @@ def home():
 @app.post("/webhook")
 async def webhook(request: Request):
     data = await request.json()
-
-    print("\n\n========== NEW REQUEST ==========")
+    
+print("\n\n========== NEW REQUEST ==========")
     import json
-
 print(json.dumps(data, indent=4, ensure_ascii=False))
+
     print("=================================\n\n")
 
-    return {"status": "ok"}
+ return {"status": "ok"}
