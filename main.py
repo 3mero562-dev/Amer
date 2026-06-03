@@ -60,13 +60,18 @@ async def webhook(request: Request):
     print("===================")
 
     try:
-        value = data["entry"][0]["changes"][0]["value"]
+        if "changes" in data["entry"][0]:
+            value = data["entry"][0]["changes"][0]["value"]
 
-        sender_id = value["sender"]["id"]
-        message_text = value["message"]["text"]
+            sender_id = value["sender"]["id"]
+            message_text = value["message"]["text"]
 
-        print("SENDER =", sender_id)
-        print("MESSAGE =", message_text)
+            print("SENDER =", sender_id)
+            print("MESSAGE =", message_text)
+
+        else:
+            print("REAL INSTAGRAM MESSAGE")
+            print(data)
 
     except Exception as e:
         print("ERROR =", str(e))
