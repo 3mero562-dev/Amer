@@ -56,9 +56,14 @@ async def verify_webhook(request: Request):
 async def webhook(request: Request):
     data = await request.json()
 
-    print("New Message:")
+    print("===================")
     print(data)
+    print("===================")
 
-    return {
-        "reply": STORE_INFO
-    }
+    try:
+        message_text = data["entry"][0]["messaging"][0]["message"]["text"]
+        print("MESSAGE =", message_text)
+    except:
+        print("NO TEXT FOUND")
+
+    return {"status": "ok"}
