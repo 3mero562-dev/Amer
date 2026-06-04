@@ -5,7 +5,9 @@ import os
 import requests
 
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
-
+print("TOKEN EXISTS:", INSTAGRAM_ACCESS_TOKEN is not None)
+print("TOKEN START:", INSTAGRAM_ACCESS_TOKEN[:20] if INSTAGRAM_ACCESS_TOKEN else "NONE")
+print("TOKEN LENGTH:", len(INSTAGRAM_ACCESS_TOKEN) if INSTAGRAM_ACCESS_TOKEN else 0)
 app = FastAPI()
 
 client = OpenAI(
