@@ -4,7 +4,7 @@ import json
 
 app = FastAPI()
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 print("OPENAI CLIENT LOADED")
 VERIFY_TOKEN = "amer123"
 
