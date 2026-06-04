@@ -96,5 +96,5 @@ async def webhook(request: Request):
         print("==============================")
 
    except Exception as e:
-    print("OPENAI ERROR TYPE:", type(e))
+print("OPENAI ERROR TYPE:", type(e))
     print("OPENAI ERROR:", repr(e))
