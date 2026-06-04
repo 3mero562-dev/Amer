@@ -70,7 +70,7 @@ async def webhook(request: Request):
     print(json.dumps(data, indent=4, ensure_ascii=False))
     print("=================================\n")
 
-   try:
+try:
     message_text = ...
 
     response = client.responses.create(
