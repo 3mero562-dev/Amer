@@ -48,11 +48,9 @@ STORE_INFO = """
 🔥 الكمية محدودة يومياً
 """
 
-
 @app.get("/")
 def home():
     return {"status": "working"}
-
 
 @app.get("/webhook")
 async def verify_webhook(request: Request):
@@ -65,7 +63,6 @@ async def verify_webhook(request: Request):
         return str(challenge)
 
     return {"error": "Invalid token"}
-
 
 @app.post("/webhook")
 async def webhook(request: Request):
@@ -98,16 +95,17 @@ async def webhook(request: Request):
         print(ai_reply)
 
         sender_id = data["entry"][0]["messaging"][0]["sender"]["id"]
-r = requests.post(
-    f"https://graph.facebook.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
-    json={
-        "recipient": {"id": sender_id},
-        "message": {"text": ai_reply}
-    }
-)
 
-print("META STATUS:", r.status_code)
-print("META RESPONSE:", r.text)
+        r = requests.post(
+            f"https://graph.facebook.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
+            json={
+                "recipient": {"id": sender_id},
+                "message": {"text": ai_reply}
+            }
+        )
+
+        print("META STATUS:", r.status_code)
+        print("META RESPONSE:", r.text)
 
     except Exception as e:
         print("OPENAI ERROR TYPE:", type(e))
@@ -117,6 +115,6 @@ print("META RESPONSE:", r.text)
 
 import uvicorn
 
-if __name__== "__main__":
+if name == "main":
     print("STARTING SERVER...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
