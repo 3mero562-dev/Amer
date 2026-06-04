@@ -1,5 +1,9 @@
 import json
 from fastapi import FastAPI, Request
+import requests
+
+BOT_TOKEN =https://api.telegram.org/bot8876951923:AAFCzlMvrasHtjh68mTau7vjRuBGXp7xBeM/getUpdates 
+CHAT_ID = "5805710703"
 
 app = FastAPI()
 
@@ -59,5 +63,19 @@ async def webhook(request: Request):
     print("\n\n========== NEW REQUEST ==========")
     print(json.dumps(data, indent=4, ensure_ascii=False))
     print("=================================\n\n")
+
+    try:
+        text = json.dumps(data, indent=4, ensure_ascii=False)
+
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            json={
+                "chat_id": CHAT_ID,
+                "text": text[:4000]
+            }
+        )
+
+    except Exception as e:
+        print("Telegram Error:", e)
 
     return {"status": "ok"}
