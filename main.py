@@ -101,7 +101,7 @@ requests.post(
         "message": {"text": ai_reply}
     }
 )
-    except Exception as e:
+except Exception as e:
         print("OPENAI ERROR TYPE:", type(e))
         print("OPENAI ERROR:", repr(e))
 
