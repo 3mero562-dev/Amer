@@ -62,18 +62,7 @@ async def webhook(request: Request):
 print("STATUS:", response.status_code)
 print("RESPONSE:", response.text)
 
-⏰ أوقات العمل: من 3 عصراً إلى 10 مساءً
 
-اكتب:
-- الأسعار
-- الدونات
-- الكرواسون
-- المشروبات
-"""
-                }
-            },
-            timeout=10
-        )
 
     except Exception as e:
         print("INSTAGRAM REPLY ERROR:", e)
