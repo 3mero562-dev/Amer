@@ -91,8 +91,8 @@ async def webhook(request: Request):
         ai_reply = response.output_text
         print(ai_reply)
 
-    except Exception as e:
-    print("OPENAI ERROR TYPE:", type(e))
-        print("OPENAI ERROR:", repr(e))
+        except Exception as e:
+            print("OPENAI ERROR TYPE:", type(e))
+            print("OPENAI ERROR:", repr(e))
 
     return {"status": "ok"}
