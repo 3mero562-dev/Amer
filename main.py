@@ -69,30 +69,34 @@ async def webhook(request: Request):
     print("\n========== NEW REQUEST ==========")
     print(json.dumps(data, indent=4, ensure_ascii=False))
     print("=================================\n")
-
     try:
         message_text = data["entry"][0]["messaging"][0]["message"]["text"]
 
         response = client.responses.create(
             model="gpt-5-mini",
             input=f"""
-أنت موظف خدمة زبائن لمحل كوكيز لارين.
+    أنت موظف خدمة زبائن لمحل كوكيز لارين.
 
-معلومات المحل:
-{STORE_INFO}
+    معلومات المحل:
+    {STORE_INFO}
 
-رسالة الزبون:
-{message_text}
+    رسالة الزبون:
+    {message_text}
 
-جاوب باللهجة العراقية وباختصار.
-"""
+    جاوب باللهجة العراقية وباختصار.
+    """
         )
 
         ai_reply = response.output_text
         print(ai_reply)
 
-   except Exception as e:
-            print("OPENAI ERROR TYPE:", type(e))
-            print("OPENAI ERROR:", repr(e))
+    except Exception as e:
+        print("OPENAI ERROR TYPE:", type(e))
+        print("OPENAI ERROR:", repr(e))
 
-  return {"status": "ok"}
+    return {"status": "ok"}
+import uvicorn
+
+if __name__=="__main__":
+    print("STARTING SERVER...")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
