@@ -98,14 +98,16 @@ async def webhook(request: Request):
         print(ai_reply)
 
         sender_id = data["entry"][0]["messaging"][0]["sender"]["id"]
+r = requests.post(
+    f"https://graph.facebook.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
+    json={
+        "recipient": {"id": sender_id},
+        "message": {"text": ai_reply}
+    }
+)
 
-        requests.post(
-            f"https://graph.facebook.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
-            json={
-                "recipient": {"id": sender_id},
-                "message": {"text": ai_reply}
-            }
-        )
+print("META STATUS:", r.status_code)
+print("META RESPONSE:", r.text)
 
     except Exception as e:
         print("OPENAI ERROR TYPE:", type(e))
