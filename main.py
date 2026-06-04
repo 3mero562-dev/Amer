@@ -2,7 +2,7 @@ import json
 from fastapi import FastAPI, Request
 import requests
 
-BOT_TOKEN ="bot8876951923:AAFCzlMvrasHtjh68mTau7vjRuBGXp7xBeM"
+BOT_TOKEN ="8876951923:AAFCzlMvrasHtjh68mTau7vjRuBGXp7xBeM"
 CHAT_ID = "5805710703"
 
 app = FastAPI()
