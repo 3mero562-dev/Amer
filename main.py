@@ -70,7 +70,7 @@ async def webhook(request: Request):
     print(json.dumps(data, indent=4, ensure_ascii=False))
     print("=================================\n")
 
-try:
+    try:
         message_text = data["entry"][0]["messaging"][0]["message"]["text"]
 
         response = client.responses.create(
@@ -92,7 +92,7 @@ try:
         print(ai_reply)
 
     except Exception as e:
-        print("OPENAI ERROR TYPE:", type(e))
+    print("OPENAI ERROR TYPE:", type(e))
         print("OPENAI ERROR:", repr(e))
 
     return {"status": "ok"}
