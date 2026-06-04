@@ -71,18 +71,28 @@ async def webhook(request: Request):
     print("=================================\n")
 
 try:
-    message_text = ...
+        message_text = data["entry"][0]["messaging"][0]["message"]["text"]
 
-    response = client.responses.create(
-        ...
-    )
+        response = client.responses.create(
+            model="gpt-5-mini",
+            input=f"""
+أنت موظف خدمة زبائن لمحل كوكيز لارين.
 
-    ai_reply = response.output_text
+معلومات المحل:
+{STORE_INFO}
 
-    print(ai_reply)
+رسالة الزبون:
+{message_text}
 
-   except Exception as e:
-print("OPENAI ERROR TYPE:", type(e))
-    print("OPENAI ERROR:", repr(e))
+جاوب باللهجة العراقية وباختصار.
+"""
+        )
 
-     return {"status": "ok"}
+        ai_reply = response.output_text
+        print(ai_reply)
+
+    except Exception as e:
+        print("OPENAI ERROR TYPE:", type(e))
+        print("OPENAI ERROR:", repr(e))
+
+    return {"status": "ok"}
