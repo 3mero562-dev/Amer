@@ -1,10 +1,12 @@
 from fastapi import FastAPI, Request
 from openai import OpenAI
 import json
-
+import os
 app = FastAPI()
 
-client = OpenAI(api_key="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")
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY")
+)
 print("OPENAI CLIENT LOADED")
 VERIFY_TOKEN = "amer123"
 
