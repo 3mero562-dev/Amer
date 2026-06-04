@@ -41,47 +41,28 @@ async def webhook(request: Request):
     print("=====================================\n")
 
     try:
-        sender_id = data["entry"][0]["messaging"][0]["sender"]["id"]
+    sender_id = data["entry"][0]["messaging"][0]["sender"]["id"]
 
-        response = requests.post(
-    "https://graph.facebook.com/v23.0/me/messages",
-    params={
-        "access_token": ACCESS_TOKEN
-    },
-    json={
-        "recipient": {
-            "id": sender_id
+    response = requests.post(
+        "https://graph.facebook.com/v23.0/me/messages",
+        params={
+            "access_token": ACCESS_TOKEN
         },
-        "message": {
-            "text": "أهلاً بك في كوكيز لارين 🍪"
-        }
-    },
-    timeout=10
-)
-
-print("STATUS:", response.status_code)
-print("RESPONSE:", response.text)
-
-
-
-    except Exception as e:
-        print("INSTAGRAM REPLY ERROR:", e)
-
-    try:
-        requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-            json={
-                "chat_id": CHAT_ID,
-                "text": json.dumps(
-                    data,
-                    indent=2,
-                    ensure_ascii=False
-                )[:4000]
+        json={
+            "recipient": {
+                "id": sender_id
             },
-            timeout=10
-        )
+            "message": {
+                "text": "أهلاً بك في كوكيز لارين 🍪"
+            }
+        },
+        timeout=10
+    )
 
-    except Exception as e:
-        print("TELEGRAM ERROR:", e)
+    print("STATUS:", response.status_code)
+    print("RESPONSE:", response.text)
+
+except Exception as e:
+    print("INSTAGRAM REPLY ERROR:", e)
 
     return {"status": "ok"}
