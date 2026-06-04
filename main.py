@@ -7,7 +7,7 @@ app = FastAPI()
 client = OpenAI(
     api_key="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"
 )
-
+print("OPENAI CLIENT LOADED")
 VERIFY_TOKEN = "amer123"
 
 STORE_INFO = """
@@ -95,7 +95,6 @@ async def webhook(request: Request):
         print(ai_reply)
         print("==============================")
 
-    except Exception as e:
-        print("OPENAI ERROR:", e)
-
-    return {"status": "ok"}
+   except Exception as e:
+    print("OPENAI ERROR TYPE:", type(e))
+    print("OPENAI ERROR:", repr(e))
