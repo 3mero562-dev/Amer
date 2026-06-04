@@ -2,6 +2,9 @@ from fastapi import FastAPI, Request
 from openai import OpenAI
 import json
 import os
+import requests
+
+INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
 app = FastAPI()
 
 client = OpenAI(
@@ -89,7 +92,15 @@ async def webhook(request: Request):
 
         ai_reply = response.output_text
         print(ai_reply)
+sender_id = data["entry"][0]["messaging"][0]["sender"]["id"]
 
+requests.post(
+    f"https://graph.facebook.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
+    json={
+        "recipient": {"id": sender_id},
+        "message": {"text": ai_reply}
+    }
+)
     except Exception as e:
         print("OPENAI ERROR TYPE:", type(e))
         print("OPENAI ERROR:", repr(e))
