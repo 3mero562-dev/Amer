@@ -10,6 +10,8 @@ VERIFY_TOKEN = "amer123"
 BOT_TOKEN = "8876951923:AAFCzlMvrasHtjh68mTau7vjRuBGXp7xBeM"
 CHAT_ID = "5805710703"
 
+ACCESS_TOKEN = "IGAAjO1g9T9WRBZAGE0TDFoUDFnWFZAlY3RVOFV6bi01ZAWY1ZAlNJQ1RmSEswdFRmWFNabkI3SjVnNVE5dDRycUlrWXpvREhCNjFaSWlCNG5wclY1N19VVHkyUzBSQ1FGTl9NS3lkczRMY3ZANNGxQWkJBZAmlDRnJrMklXeFlJb2FHRQZDZD"
+
 
 @app.get("/")
 async def home():
@@ -37,6 +39,37 @@ async def webhook(request: Request):
     print("\n========== INSTAGRAM EVENT ==========")
     print(json.dumps(data, indent=4, ensure_ascii=False))
     print("=====================================\n")
+
+    try:
+        sender_id = data["entry"][0]["messaging"][0]["sender"]["id"]
+
+        requests.post(
+            "https://graph.facebook.com/v23.0/me/messages",
+            params={
+                "access_token": ACCESS_TOKEN
+            },
+            json={
+                "recipient": {
+                    "id": sender_id
+                },
+                "message": {
+                    "text": """أهلاً بك في كوكيز لارين 🍪
+
+⏰ أوقات العمل: من 3 عصراً إلى 10 مساءً
+
+اكتب:
+- الأسعار
+- الدونات
+- الكرواسون
+- المشروبات
+"""
+                }
+            },
+            timeout=10
+        )
+
+    except Exception as e:
+        print("INSTAGRAM REPLY ERROR:", e)
 
     try:
         requests.post(
