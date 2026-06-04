@@ -61,6 +61,7 @@ async def webhook(request: Request):
 
         print("STATUS:", response.status_code)
         print("RESPONSE:", response.text)
+        print("TOKEN:", ACCESS_TOKEN[:20])
 
     except Exception as e:
         print("INSTAGRAM REPLY ERROR:", e)
