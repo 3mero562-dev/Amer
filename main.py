@@ -92,22 +92,22 @@ async def webhook(request: Request):
 يشمل جميع مناطق كربلاء 🌹"""
 
         elif any(char.isdigit() for char in message_text):
-         reply = """
+    reply = """
 ✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
-🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز.
+🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز
 """
 
-       telegram_message = f"""
-        📦 طلب جديد من الانستكرام
-        
-        👤 User ID: {sender_id}
-        
-        📱 الرقم المرسل:
+    telegram_message = f"""
+📦 طلب جديد من الانستكرام
+
+👤 User ID: {sender_id}
+
+📱 الرقم المرسل:
 {message_text}
 """
 
-     requests.post(
+    requests.post(
         f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
         json={
             "chat_id": TELEGRAM_CHAT_ID,
