@@ -41,6 +41,8 @@ async def webhook(request: Request):
 
         message_text = event["message"].get("text", "").lower()
         sender_id = event["sender"]["id"]
+        print("MESSAGE TEXT =", message_text)
+        print("SENDER ID =", sender_id)
 
         if "سخان وسط" in message_text:
             reply = """🍪 سخان كيكة كوكيز وسط
@@ -103,13 +105,15 @@ async def webhook(request: Request):
 
 راسلنا باسم المنتج المطلوب وسنزودك بالسعر مباشرة."""
 
-        requests.post(
+        r = requests.post(
             f"https://graph.facebook.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
             json={
                 "recipient": {"id": sender_id},
                 "message": {"text": reply}
             }
         )
+        print("META STATUS =", r.status_code)
+        print("META RESPONSE =", r.text)
 
     except Exception as e:
         print("ERROR:", e)
