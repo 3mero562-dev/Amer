@@ -78,9 +78,7 @@ async def webhook(request: Request):
 
 ✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة.
 """
-        if user_orders.get(sender_id) == "completed":
-            return {"status": "ignored"}
-
+      
         print("MESSAGE TEXT =", message_text)
         print("SENDER ID =", sender_id)
 
