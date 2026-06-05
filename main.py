@@ -40,7 +40,7 @@ async def webhook(request: Request):
 
         message_text = event["message"].get("text", "").lower()
         sender_id = event["sender"]["id"]
-            if message_text in ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]:
+        if message_text in ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]:
                 reply = """
 🍪❤️ هلا وغلا
 
