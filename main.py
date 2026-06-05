@@ -16,8 +16,8 @@ def home():
 async def verify_webhook(request: Request):
 
     mode = request.query_params.get("hub.mode")
-token = request.query_params.get("hub.verify_token")
-challenge = request.query_params.get("hub.challenge")
+    token = request.query_params.get("hub.verify_token")
+    challenge = request.query_params.get("hub.challenge")
 
 if mode == "subscribe" and token == VERIFY_TOKEN:
     return str(challenge)
