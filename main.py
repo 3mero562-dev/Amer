@@ -34,7 +34,13 @@ async def webhook(request: Request):
     try:
         event = data["entry"][0]["messaging"][0]
 
-        if message_text in ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]:
+    
+        if "message" not in event:
+            return {"status": "ignored"}
+
+        message_text = event["message"].get("text", "").lower()
+        sender_id = event["sender"]["id"]
+            if message_text in ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]:
     reply = """
 🍪❤️ هلا وغلا
 
@@ -72,11 +78,6 @@ async def webhook(request: Request):
 
 ✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة.
 """
-        if "message" not in event:
-            return {"status": "ignored"}
-
-        message_text = event["message"].get("text", "").lower()
-        sender_id = event["sender"]["id"]
         if user_orders.get(sender_id) == "completed":
             return {"status": "ignored"}
 
