@@ -1,59 +1,17 @@
 from fastapi import FastAPI, Request
-from openai import OpenAI
-import json
-import os
 import requests
+import os
 
-INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
-print("TOKEN RAW =", repr(INSTAGRAM_ACCESS_TOKEN))
-print("TOKEN EXISTS:", INSTAGRAM_ACCESS_TOKEN is not None)
-print("TOKEN START:", INSTAGRAM_ACCESS_TOKEN[:20] if INSTAGRAM_ACCESS_TOKEN else "NONE")
-print("TOKEN LENGTH:", len(INSTAGRAM_ACCESS_TOKEN) if INSTAGRAM_ACCESS_TOKEN else 0)
 app = FastAPI()
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
-)
-
-print("OPENAI CLIENT LOADED")
-
 VERIFY_TOKEN = "amer123"
+INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
 
-STORE_INFO = """
-أهلاً بك في كوكيز لارين 🍪
-
-⏰ أوقات العمل: من 3 عصراً إلى 10 مساءً
-
-- سخان كيكة كوكيز -
-• شخص واحد — 2500 د.ع
-• صغيرة (3-4 أشخاص) — 8000 د.ع
-• وسط (5-7 أشخاص) — 15000 د.ع
-• كبيرة (8-11 شخص) — 25000 د.ع
-
-- الكرواسون المحشي -
-شوكلا — 2000 د.ع
-لوتس — 2000 د.ع
-كراميل — 2000 د.ع
-
-- الدونات -
-نوتيلا بيضاء — 1000 د.ع
-نوتيلا — 1000 د.ع
-فراولة — 1000 د.ع
-
-- المشروبات -
-موهيتو
-بلو بيري
-ليمون نعناع
-صودا
-
-السعر 2500 د.ع
-
-🔥 الكمية محدودة يومياً
-"""
 
 @app.get("/")
 def home():
     return {"status": "working"}
+
 
 @app.get("/webhook")
 async def verify_webhook(request: Request):
@@ -67,62 +25,97 @@ async def verify_webhook(request: Request):
 
     return {"error": "Invalid token"}
 
+
 @app.post("/webhook")
 async def webhook(request: Request):
 
     data = await request.json()
 
-    print("\n========== NEW REQUEST ==========")
-    print(json.dumps(data, indent=4, ensure_ascii=False))
-    print("=================================\n")
-
     try:
         event = data["entry"][0]["messaging"][0]
 
         if "message" not in event:
-        return {"status": "ignored"}
+            return {"status": "ignored"}
 
-        message_text = event["message"].get("text", "")
+        message_text = event["message"].get("text", "").lower()
+        sender_id = event["sender"]["id"]
 
-        response = client.responses.create(
-            model="gpt-5-mini",
-            input=f"""
-أنت موظف خدمة زبائن لمحل كوكيز لارين.
+        if "سخان وسط" in message_text:
+            reply = """🍪 سخان كيكة كوكيز وسط
 
-معلومات المحل:
-{STORE_INFO}
+👥 يكفي 5–7 أشخاص
 
-رسالة الزبون:
-{message_text}
+💰 السعر: 15000 د.ع
 
-جاوب باللهجة العراقية وباختصار.
-"""
-        )
+📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
-        ai_reply = response.output_text
-        print(ai_reply)
+        elif "سخان صغير" in message_text:
+            reply = """🍪 سخان كيكة كوكيز صغيرة
 
-        sender_id = data["entry"][0]["messaging"][0]["sender"]["id"]
+👥 يكفي 3–4 أشخاص
 
-        r = requests.post(
+💰 السعر: 8000 د.ع
+
+📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
+
+        elif "سخان كبير" in message_text:
+            reply = """🍪 سخان كيكة كوكيز كبيرة
+
+👥 يكفي 8–11 شخص
+
+💰 السعر: 25000 د.ع
+
+📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
+
+        elif "فردي" in message_text:
+            reply = """🍪 سخان كيكة كوكيز فردي
+
+👤 يكفي شخص واحد
+
+💰 السعر: 2500 د.ع
+
+📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
+
+        elif (
+            "التوصيل" in message_text
+            or "سعر التوصيل" in message_text
+            or "شكد التوصيل" in message_text
+            or "اجور التوصيل" in message_text
+        ):
+            reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
+
+يشمل جميع مناطق كربلاء 🌹"""
+
+        elif any(char.isdigit() for char in message_text):
+            reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
+
+🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز."""
+
+        else:
+            reply = """هلا وغلا ❤️🍪
+
+🍪 سخان كيكة كوكيز
+🥐 كرواسون محشي
+🍩 دونات
+🍹 مشروبات
+
+راسلنا باسم المنتج المطلوب وسنزودك بالسعر مباشرة."""
+
+        requests.post(
             f"https://graph.facebook.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
             json={
                 "recipient": {"id": sender_id},
-                "message": {"text": ai_reply}
+                "message": {"text": reply}
             }
         )
 
-        print("META STATUS:", r.status_code)
-        print("META RESPONSE:", r.text)
-
     except Exception as e:
-        print("OPENAI ERROR TYPE:", type(e))
-        print("OPENAI ERROR:", repr(e))
+        print("ERROR:", e)
 
     return {"status": "ok"}
 
+
 import uvicorn
 
-if __name__ == "__main__":
-    print("STARTING SERVER...")
+if name == "main":
     uvicorn.run(app, host="0.0.0.0", port=8000)
