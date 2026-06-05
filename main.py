@@ -148,8 +148,6 @@ async def webhook(request: Request):
 
 ✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة."""
 
-```
-```
 
         r = requests.post(
             f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
