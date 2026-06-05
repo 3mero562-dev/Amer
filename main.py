@@ -22,7 +22,7 @@ async def verify_webhook(request: Request):
 if mode == "subscribe" and token == VERIFY_TOKEN:
     return str(challenge)
 
-return {"error": "Invalid token"}
+    return {"error": "Invalid token"}
 
 @app.post("/webhook")
 async def webhook(request: Request):
