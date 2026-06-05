@@ -39,6 +39,8 @@ async def webhook(request: Request):
 
         message_text = event["message"].get("text", "").lower()
         sender_id = event["sender"]["id"]
+        if user_orders.get(sender_id) == "completed":
+            return {"status": "ignored"}
 
         print("MESSAGE TEXT =", message_text)
         print("SENDER ID =", sender_id)
