@@ -116,6 +116,7 @@ async def webhook(request: Request):
                 }
             )
             user_orders.pop(sender_id, None)
+            user_orders[sender_id] = "completed"
 
         else:
             reply = """هلا وغلا ❤️🍪
