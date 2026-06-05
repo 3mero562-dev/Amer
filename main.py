@@ -11,7 +11,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 @app.get("/")
 def home():
-return {"status": "working"}
+    return {"status": "working"}
 
 @app.get("/webhook")
 async def verify_webhook(request: Request):
