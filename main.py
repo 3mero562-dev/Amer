@@ -95,7 +95,22 @@ async def webhook(request: Request):
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز."""
+telegram_message = f"""
+📦 طلب جديد من الانستكرام
 
+👤 User ID: {sender_id}
+
+📱 الرقم المرسل:
+{message_text}
+"""
+
+requests.post(
+    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+    json={
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": telegram_message
+    }
+)
         else:
             reply = """هلا وغلا ❤️🍪
 
