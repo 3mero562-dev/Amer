@@ -80,9 +80,9 @@ async def webhook(request: Request):
         event = data["entry"][0]["messaging"][0]
 
         if "message" not in event:
-          return {"status": "ignored"}
+        return {"status": "ignored"}
 
-message_text = event["message"].get("text", "")
+        message_text = event["message"].get("text", "")
 
         response = client.responses.create(
             model="gpt-5-mini",
