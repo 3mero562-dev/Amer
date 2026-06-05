@@ -48,38 +48,38 @@ async def webhook(request: Request):
         print("SENDER ID =", sender_id)
 
         if "سخان وسط" in message_text:
-    user_orders[sender_id] = "سخان وسط"
-    reply = """
-👥 يكفي 5–7 أشخاص
-
-💰 السعر: 15000 د.ع
+            user_orders[sender_id] = "سخان وسط"
+            reply = """
+        👥 يكفي 5–7 أشخاص
+        
+        💰 السعر: 15000 د.ع
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
         elif "سخان صغير" in message_text:
-    user_orders[sender_id] = "سخان صغير"
-    reply = """
-👥 يكفي 3–4 أشخاص
+            user_orders[sender_id] = "سخان صغير"
+            reply = """
+        👥 يكفي 3–4 أشخاص
 
 💰 السعر: 8000 د.ع
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
         elif "سخان كبير" in message_text:
-    user_orders[sender_id] = "سخان كبير"
-    reply = """
-👥 يكفي 8–11 شخص
-
-💰 السعر: 25000 د.ع
+            user_orders[sender_id] = "سخان كبير"
+            reply = """
+        👥 يكفي 8–11 شخص
+        
+        💰 السعر: 25000 د.ع
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
         elif "فردي" in message_text:
-    user_orders[sender_id] = "فردي"
-    reply = """
-👤 يكفي شخص واحد
-
-💰 السعر: 2500 د.ع
+            user_orders[sender_id] = "فردي"
+            reply = """
+        👤 يكفي شخص واحد
+        
+        💰 السعر: 2500 د.ع
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
