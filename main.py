@@ -106,7 +106,7 @@ async def webhook(request: Request):
 راسلنا باسم المنتج المطلوب وسنزودك بالسعر مباشرة."""
 
         r = requests.post(
-            f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}"
+            f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
             json={
                 "recipient": {"id": sender_id},
                 "message": {"text": reply}
