@@ -113,6 +113,7 @@ async def webhook(request: Request):
             }
         )
         print("META STATUS =", r.status_code)
+        print("TOKEN =", INSTAGRAM_ACCESS_TOKEN)
         print("META RESPONSE =", r.text)
 
     except Exception as e:
