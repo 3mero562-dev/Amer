@@ -85,7 +85,7 @@ async def webhook(request: Request):
 
 يشمل جميع مناطق كربلاء 🌹"""
 
-        elif any(char.isdigit() for char in message_text):
+        elif any(char.isdigit() for char in message_text) and len(message_text) > 10:
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
@@ -113,6 +113,7 @@ async def webhook(request: Request):
                     "text": telegram_message
                 }
             )
+            user_orders.pop(sender_id, None)
 
         else:
             reply = """هلا وغلا ❤️🍪
