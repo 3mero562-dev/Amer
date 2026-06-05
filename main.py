@@ -1,17 +1,22 @@
 from fastapi import FastAPI, Request
-import json
+from fastapi.responses import PlainTextResponse
 import requests
 import os
 
 app = FastAPI()
+
 user_orders = {}
+
 VERIFY_TOKEN = "amer123"
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+
 @app.get("/")
 def home():
     return {"status": "working"}
+
 
 @app.get("/webhook")
 async def verify_webhook(request: Request):
@@ -20,30 +25,35 @@ async def verify_webhook(request: Request):
     challenge = request.query_params.get("hub.challenge")
 
     if mode == "subscribe" and token == VERIFY_TOKEN:
-        return str(challenge)
+        return PlainTextResponse(challenge or "")
 
     return {"error": "Invalid token"}
 
+
 @app.post("/webhook")
 async def webhook(request: Request):
-
     data = await request.json()
+
     print("NEW REQUEST")
     print(data)
 
     try:
-        event = data["entry"][0]["messaging"][0]
+        event = data.get("entry", [{}])[0].get("messaging", [{}])[0]
 
-    
         if "message" not in event:
             return {"status": "ignored"}
 
-        message_text = event["message"].get("text", "").lower()
-        sender_id = event["sender"]["id"]
+        message_text = event["message"].get("text", "").strip().lower()
+        sender_id = event.get("sender", {}).get("id")
+
+        if not sender_id or not message_text:
+            return {"status": "ignored"}
+
         print("MESSAGE TEXT =", message_text)
         print("SENDER ID =", sender_id)
+
         if message_text in ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]:
-                reply = """
+            reply = """
 🍪❤️ هلا وغلا
 
 🤤🔥 نورتوا كوكيز لارين
@@ -80,8 +90,6 @@ async def webhook(request: Request):
 
 ✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة.
 """
-      
-        
 
         elif "سخان وسط" in message_text:
             user_orders[sender_id] = "سخان وسط"
@@ -115,26 +123,20 @@ async def webhook(request: Request):
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
-        elif (
-            "التوصيل" in message_text
-            or "سعر التوصيل" in message_text
-            or "شكد التوصيل" in message_text
-            or "اجور التوصيل" in message_text
-        ):
+        elif any(word in message_text for word in ["التوصيل", "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
             reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
 
 يشمل جميع مناطق كربلاء 🌹"""
 
         elif sender_id in user_orders and len(message_text) > 10 and any(char.isdigit() for char in message_text):
+            product = user_orders.get(sender_id, "منتج غير محدد")
+
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
 
-            product = user_orders.get(sender_id, "منتج غير محدد")
-
             telegram_message = f"""
-
-📦 طلب جديد من الانستكرام
+📦 طلب جديد من الانستغرام
 
 🍪 المنتج:
 {product}
@@ -146,30 +148,41 @@ async def webhook(request: Request):
 {message_text}
 """
 
-            requests.post(
-                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": TELEGRAM_CHAT_ID,
-                    "text": telegram_message
-                }
-            )
-            
-            user_orders[sender_id] = "completed"
+            if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+                tg_response = requests.post(
+                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                    json={
+                        "chat_id": TELEGRAM_CHAT_ID,
+                        "text": telegram_message
+                    },
+                    timeout=10
+                )
+
+                print("TELEGRAM STATUS =", tg_response.status_code)
+                print("TELEGRAM RESPONSE =", tg_response.text)
+            else:
+                print("TELEGRAM ERROR: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID")
+
+            user_orders.pop(sender_id, None)
 
         else:
             reply = "🍪 ارسل اسم المنتج فقط للتثبيت"
-  
 
-        r = requests.post(
+        if not INSTAGRAM_ACCESS_TOKEN:
+            print("INSTAGRAM ERROR: Missing INSTAGRAM_ACCESS_TOKEN")
+            return {"status": "error", "message": "Missing Instagram access token"}
+
+        meta_response = requests.post(
             f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
             json={
                 "recipient": {"id": sender_id},
                 "message": {"text": reply}
-            }
+            },
+            timeout=10
         )
 
-        print("META STATUS =", r.status_code)
-        print("META RESPONSE =", r.text)
+        print("META STATUS =", meta_response.status_code)
+        print("META RESPONSE =", meta_response.text)
 
     except Exception as e:
         print("ERROR:", e)
