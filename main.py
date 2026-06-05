@@ -10,13 +10,12 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 @app.get("/")
 def home():
-return {"status": "working"}
+    return {"status": "working"}
 
 @app.get("/webhook")
 async def verify_webhook(request: Request):
 
-```
-mode = request.query_params.get("hub.mode")
+    mode = request.query_params.get("hub.mode")
 token = request.query_params.get("hub.verify_token")
 challenge = request.query_params.get("hub.challenge")
 
@@ -24,15 +23,13 @@ if mode == "subscribe" and token == VERIFY_TOKEN:
     return str(challenge)
 
 return {"error": "Invalid token"}
-```
 
 @app.post("/webhook")
 async def webhook(request: Request):
 
-```
-data = await request.json()
-print("NEW REQUEST")
-print(data)
+    data = await request.json()
+    print("NEW REQUEST")
+    print(data)
 
 try:
     event = data["entry"][0]["messaging"][0]
