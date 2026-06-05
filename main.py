@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 import json
+import requests
 import os
-from urllib import request as urllib_request
 
 app = FastAPI()
 user_orders = {}
