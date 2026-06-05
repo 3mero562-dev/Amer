@@ -3,7 +3,7 @@ import requests
 import os
 
 app = FastAPI()
-
+user_orders = {}
 VERIFY_TOKEN = "amer123"
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -48,8 +48,8 @@ async def webhook(request: Request):
         print("SENDER ID =", sender_id)
 
         if "سخان وسط" in message_text:
-            reply = """🍪 سخان كيكة كوكيز وسط
-
+    user_orders[sender_id] = "سخان وسط"
+    reply = """
 👥 يكفي 5–7 أشخاص
 
 💰 السعر: 15000 د.ع
@@ -57,8 +57,8 @@ async def webhook(request: Request):
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
         elif "سخان صغير" in message_text:
-            reply = """🍪 سخان كيكة كوكيز صغيرة
-
+    user_orders[sender_id] = "سخان صغير"
+    reply = """
 👥 يكفي 3–4 أشخاص
 
 💰 السعر: 8000 د.ع
@@ -66,8 +66,8 @@ async def webhook(request: Request):
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
         elif "سخان كبير" in message_text:
-            reply = """🍪 سخان كيكة كوكيز كبيرة
-
+    user_orders[sender_id] = "سخان كبير"
+    reply = """
 👥 يكفي 8–11 شخص
 
 💰 السعر: 25000 د.ع
@@ -75,8 +75,8 @@ async def webhook(request: Request):
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
         elif "فردي" in message_text:
-            reply = """🍪 سخان كيكة كوكيز فردي
-
+    user_orders[sender_id] = "فردي"
+    reply = """
 👤 يكفي شخص واحد
 
 💰 السعر: 2500 د.ع
@@ -98,12 +98,19 @@ async def webhook(request: Request):
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
+     
+           product = user_orders.get(sender_id, "منتج غير محدد")
 
-            telegram_message = f"""📦 طلب جديد من الانستكرام
+telegram_message = f"""
+📦 طلب جديد من الانستكرام
 
-👤 User ID: {sender_id}
+🍪 المنتج:
+{product}
 
-📱 الرقم المرسل:
+👤 User ID:
+{sender_id}
+
+📱 الرقم والعنوان:
 {message_text}
 """
 
