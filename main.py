@@ -115,7 +115,7 @@ async def webhook(request: Request):
                     "text": telegram_message
                 }
             )
-            user_orders.pop(sender_id, None)
+            
             user_orders[sender_id] = "completed"
 
         else:
