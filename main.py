@@ -87,7 +87,7 @@ async def webhook(request: Request):
 
 يشمل جميع مناطق كربلاء 🌹"""
 
-        elif sender_id in user_orders and any(char.isdigit() for char in message_text):
+        elif sender_id in user_orders and len(message_text) > 10 and any(char.isdigit() for char in message_text):
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
