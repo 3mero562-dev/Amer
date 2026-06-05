@@ -40,6 +40,8 @@ async def webhook(request: Request):
 
         message_text = event["message"].get("text", "").lower()
         sender_id = event["sender"]["id"]
+        print("MESSAGE TEXT =", message_text)
+        print("SENDER ID =", sender_id)
         if message_text in ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]:
                 reply = """
 🍪❤️ هلا وغلا
@@ -79,8 +81,7 @@ async def webhook(request: Request):
 ✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة.
 """
       
-        print("MESSAGE TEXT =", message_text)
-        print("SENDER ID =", sender_id)
+        
 
         elif "سخان وسط" in message_text:
             user_orders[sender_id] = "سخان وسط"
