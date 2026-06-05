@@ -46,43 +46,35 @@ try:
     if "سخان وسط" in message_text:
         user_orders[sender_id] = "سخان وسط"
         reply = """👥 يكفي 5–7 أشخاص
-```
 
 💰 السعر: 15000 د.ع
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
-```
     elif "سخان صغير" in message_text:
         user_orders[sender_id] = "سخان صغير"
         reply = """👥 يكفي 3–4 أشخاص
-```
 
 💰 السعر: 8000 د.ع
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
-```
     elif "سخان كبير" in message_text:
         user_orders[sender_id] = "سخان كبير"
         reply = """👥 يكفي 8–11 شخص
-```
 
 💰 السعر: 25000 د.ع
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
-```
     elif "فردي" in message_text:
         user_orders[sender_id] = "فردي"
         reply = """👤 يكفي شخص واحد
-```
 
 💰 السعر: 2500 د.ع
 
 📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
 
-```
     elif (
         "التوصيل" in message_text
         or "سعر التوصيل" in message_text
@@ -90,23 +82,18 @@ try:
         or "اجور التوصيل" in message_text
     ):
         reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
-```
 
 يشمل جميع مناطق كربلاء 🌹"""
 
-```
     elif any(char.isdigit() for char in message_text):
 
         reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
-```
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
 
-```
         product = user_orders.get(sender_id, "منتج غير محدد")
 
         telegram_message = f"""
-```
 
 📦 طلب جديد من الانستكرام
 
@@ -120,7 +107,6 @@ try:
 {message_text}
 """
 
-```
         requests.post(
             f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
             json={
@@ -131,7 +117,6 @@ try:
 
     else:
         reply = """هلا وغلا ❤️🍪
-```
 
 نورتوا كوكيز لارين 🤤🔥
 
@@ -163,7 +148,6 @@ try:
 
 ✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة."""
 
-```
     r = requests.post(
         f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
         json={
@@ -179,4 +163,3 @@ except Exception as e:
     print("ERROR:", e)
 
 return {"status": "ok"}
-```
