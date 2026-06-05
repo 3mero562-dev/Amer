@@ -30,6 +30,8 @@ async def verify_webhook(request: Request):
 async def webhook(request: Request):
 
     data = await request.json()
+    print("NEW REQUEST")
+    print(data)
 
     try:
         event = data["entry"][0]["messaging"][0]
