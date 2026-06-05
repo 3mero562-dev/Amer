@@ -82,7 +82,7 @@ async def webhook(request: Request):
         print("MESSAGE TEXT =", message_text)
         print("SENDER ID =", sender_id)
 
-        if "سخان وسط" in message_text:
+        elif "سخان وسط" in message_text:
             user_orders[sender_id] = "سخان وسط"
             reply = """👥 يكفي 5–7 أشخاص
 
