@@ -79,7 +79,7 @@ async def webhook(request: Request):
     try:
         event = data["entry"][0]["messaging"][0]
 
-if "message" not in event:
+    if "message" not in event:
     return {"status": "ignored"}
 
 message_text = event["message"].get("text", "")
