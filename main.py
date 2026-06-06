@@ -143,7 +143,7 @@ async def webhook(request: Request):
 """
 
         
-        elif any(word in message_text for word in ["التوصيل", "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
+        elif any(word in message_text for word in [ "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
             reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
 
 يشمل جميع مناطق كربلاء 🌹"""
