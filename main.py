@@ -29,7 +29,7 @@ async def verify_webhook(request: Request):
 
     return {"error": "Invalid token"}
 
-
+seen_users = set()
 @app.post("/webhook")
 async def webhook(request: Request):
     data = await request.json()
