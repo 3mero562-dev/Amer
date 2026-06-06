@@ -95,7 +95,7 @@ async def webhook(request: Request):
 
         print("MESSAGE TEXT =", message_text)
         print("SENDER ID =", sender_id)
-
+        order_data = {"items": []}
         greetings = ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]
         product = user_orders.get(sender_id, "منتج غير محدد")
         reply = "🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برساله واحدة"
