@@ -69,7 +69,7 @@ async def webhook(request: Request):
     print("NEW REQUEST")
     print(data)
 
-    try:
+try:
         event = data.get("entry", [{}])[0].get("messaging", [{}])[0]
 
         if "message" not in event:
