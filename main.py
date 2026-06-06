@@ -168,15 +168,7 @@ async def webhook(request: Request):
                 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
                 
 
-        if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-            tg_response = requests.post(
-            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-            json={
-            "chat_id": TELEGRAM_CHAT_ID,
-            "text": telegram_message
-        },
-        timeout=10
-    )
+        
             telegram_message = f"""
         📦 طلب جديد من الانستغرام
         
@@ -201,6 +193,15 @@ async def webhook(request: Request):
             🤖 تحليل الذكاء الاصطناعي:
             {json.dumps(order_data, ensure_ascii=False, indent=2)}
             """
+        if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+    tg_response = requests.post(
+        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+        json={
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": telegram_message
+        },
+        timeout=10
+    )
 
         if not INSTAGRAM_ACCESS_TOKEN:
             print("INSTAGRAM ERROR: Missing INSTAGRAM_ACCESS_TOKEN")
