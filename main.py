@@ -143,21 +143,8 @@ async def webhook(request: Request):
 
 🔥 الكمية محدودة يومياً
 
-✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة.
+✍️ 🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة.
 """
-        elif any(word in message_text for word in [
-            "سخان صغير",
-            "سخان وسط",
-            "سخان كبير",
-            "فردي",
-            "صغيرة",
-            "وسط",
-            "كبيرة"
-        ]):
-         user_orders[sender_id] = message_text
-         product = user_orders[sender_id]
-         print("SAVED =", user_orders)
-         reply = "🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة"
         elif any(word in message_text for word in [ "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
             reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
 
@@ -165,20 +152,19 @@ async def webhook(request: Request):
 
         elif any(word in message_text for word in ["متى يوصل", "شكد وقت التوصيل", "وقت التوصيل", "التوصيل شكد", "بعد شكد ","شكد ويوصلني", "شكد يوصل", "شكد ويوصلني الطلب"]):
             reply = "🚚 مدة التوصيل من ساعة إلى ساعتين بعد تأكيد الحجز ❤️🍪"
-        elif product != "منتج غير محدد" and len(message_text) > 15:
+        elif len(message_text) > 15:
             order_data = analyze_order(message_text)
             telegram_message = f"""
             📦 طلب جديد من الانستغرام
             
             👤 User ID:
             {sender_id}
-            🍪 المنتج:
-            {product}
-            📱 رسالة الزبون:
+            
+            📦 الطلب الكامل:
+
             {message_text}
             
-            🤖 تحليل الذكاء الاصطناعي:
-            {json.dumps(order_data, ensure_ascii=False, indent=2)}
+        
             """
                         
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
