@@ -10,8 +10,8 @@ except Exception:
     import httpx
 
     class _RequestsFallback:
-        @staticmethod
-         post(url, json=None, timeout=None):
+            @staticmethod
+             def post(url, json=None, timeout=None):
             # httpx.post returns a Response object similar enough for our usage
             return httpx.post(url, json=json, timeout=timeout)
 
