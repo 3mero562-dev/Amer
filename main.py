@@ -142,22 +142,45 @@ async def webhook(request: Request):
 """
 
        
-
         elif any(word in message_text for word in ["التوصيل", "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
             reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
 
 يشمل جميع مناطق كربلاء 🌹"""
 
-        elif sender_id in user_orders and user_orders.get(sender_id) != "منتج غير محدد" and len(message_text) > 10 and any(char.isdigit() for char in message_text):
-            product = user_orders.get(sender_id, "منتج غير محدد")
-            reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
-
-🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
-
-            print("TELEGRAM STATUS =", tg_response.status_code)
-            print("TELEGRAM RESPONSE =", tg_response.text)
         else:
-            print("TELEGRAM ERROR: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID")
+            order_data = analyze_order(message_text)
+        
+            reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
+        
+        🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
+        
+            telegram_message = f"""
+        📦 طلب جديد من الانستغرام
+        
+        👤 User ID:
+        {sender_id}
+        
+        📱 رسالة الزبون:
+        {message_text}
+        
+        🤖 تحليل الذكاء الاصطناعي:
+        {json.dumps(order_data, ensure_ascii=False, indent=2)}
+        """
+         if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+    tg_response = requests.post(
+        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+        json={
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": telegram_message
+        },
+        timeout=10
+    )
+
+        print("TELEGRAM STATUS =", tg_response.status_code)
+        print("TELEGRAM RESPONSE =", tg_response.text)
+
+        else:
+        print("TELEGRAM ERROR: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID")
 
         user_orders.pop(sender_id, None)
 
