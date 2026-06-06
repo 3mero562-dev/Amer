@@ -52,8 +52,12 @@ async def webhook(request: Request):
         print("MESSAGE TEXT =", message_text)
         print("SENDER ID =", sender_id)
 
-        if message_text in ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]:
-            reply = """
+        greetings = ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]
+
+        if sender_id not in seen_users or any(word in message_text for word in greetings):
+        seen_users.add(sender_id)
+
+    reply = """
 🍪❤️ هلا وغلا
 
 🤤🔥 نورتوا كوكيز لارين
