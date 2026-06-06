@@ -84,7 +84,7 @@ async def webhook(request: Request):
     try:
         event = data.get("entry", [{}])[0].get("messaging", [{}])[0]
         if event.get("message", {}).get("is_echo"):
-        return {"status": "echo_ignored"}
+    return {"status": "echo_ignored"}
         if "message" not in event:
             return {"status": "ignored"}
 
