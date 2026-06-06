@@ -170,8 +170,12 @@ async def webhook(request: Request):
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
+try:
+    order_data = analyze_order(message_text)
+except:
+    order_data = {"items": []}
+telegram_message = f"""
 
-            telegram_message = f"""
 📦 طلب جديد من الانستغرام
 
 🍪 المنتج:
@@ -182,8 +186,9 @@ async def webhook(request: Request):
 
 📱 الرقم والعنوان:
 {message_text}
+🤖 تحليل الذكاء الاصطناعي:
+{order_data}
 """
-
             if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
                 tg_response = requests.post(
                     f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
