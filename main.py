@@ -110,7 +110,7 @@ async  webhook(request: Request):
         شكراً لاختياركم كوكيز لارين ❤️🍪
         """
        # send_instagram_message(sender_id, reply)
-        return {"status": "closed_hours"}
+       # return {"status": "closed_hours"}
         print("SENDER =", event.get("sender"))
         print("RECIPIENT =", event.get("recipient"))
         if not sender_id or not message_text:
