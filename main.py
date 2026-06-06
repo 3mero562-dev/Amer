@@ -150,7 +150,7 @@ async def webhook(request: Request):
 
         elif any(word in message_text for word in ["متى يوصل", "شكد وقت التوصيل", "وقت التوصيل", "التوصيل شكد", "بعد شكد ","شكد ويوصلني", "شكد يوصل", "شكد ويوصلني الطلب"]):
             reply = "🚚 مدة التوصيل من ساعة إلى ساعتين بعد تأكيد الحجز ❤️🍪"
-        elif len(message_text) > 15 and any(char.isdigit() for char in message_text):
+        elif product != "منتج غير محدد" and len(message_text) > 15:
             order_data = analyze_order(message_text)
             telegram_message = f"""
             📦 طلب جديد من الانستغرام
