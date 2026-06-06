@@ -166,23 +166,22 @@ async def webhook(request: Request):
         🤖 تحليل الذكاء الاصطناعي:
         {json.dumps(order_data, ensure_ascii=False, indent=2)}
         """
-         if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-    tg_response = requests.post(
-        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-        json={
-            "chat_id": TELEGRAM_CHAT_ID,
-            "text": telegram_message
-        },
-        timeout=10
-    )
+        if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+            tg_response = requests.post(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            json={
+                    "chat_id": TELEGRAM_CHAT_ID,
+                    "text": telegram_message
+                },
+                timeout=10
+            )
 
-        print("TELEGRAM STATUS =", tg_response.status_code)
-        print("TELEGRAM RESPONSE =", tg_response.text)
+            print("TELEGRAM STATUS =", tg_response.status_code)
+            print("TELEGRAM RESPONSE =", tg_response.text)
 
         else:
-        print("TELEGRAM ERROR: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID")
-
-        user_orders.pop(sender_id, None)
+            print("TELEGRAM ERROR: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID")    
+            user_orders.pop(sender_id, None)
 
         if not INSTAGRAM_ACCESS_TOKEN:
             print("INSTAGRAM ERROR: Missing INSTAGRAM_ACCESS_TOKEN")
