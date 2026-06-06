@@ -69,7 +69,7 @@ async def webhook(request: Request):
     print("NEW REQUEST")
     print(data)
 
-try:
+    try:
         event = data.get("entry", [{}])[0].get("messaging", [{}])[0]
 
         if "message" not in event:
@@ -170,9 +170,7 @@ try:
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
-try:
-    order_data = analyze_order(message_text)
-except:
+
     order_data = {"items": []}
 telegram_message = f"""
 
