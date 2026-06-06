@@ -150,7 +150,7 @@ async def webhook(request: Request):
 
         elif len(message_text) > 15 and any(char.isdigit() for char in message_text):
             order_data = analyze_order(message_text)
-            telegram_message = f"""
+        telegram_message = f"""
         📦 طلب جديد من الانستغرام
         
         👤 User ID:
@@ -168,31 +168,6 @@ async def webhook(request: Request):
                 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
                 
 
-        
-            telegram_message = f"""
-        📦 طلب جديد من الانستغرام
-        
-        👤 User ID:
-        {sender_id}
-        
-        📱 رسالة الزبون:
-        {message_text}
-        
-        🤖 تحليل الذكاء الاصطناعي:
-        {json.dumps(order_data, ensure_ascii=False, indent=2)}
-        """
-        telegram_message = f"""
-            📦 طلب جديد من الانستغرام
-            
-            👤 User ID:
-            {sender_id}
-            
-            📱 رسالة الزبون:
-            {message_text}
-            
-            🤖 تحليل الذكاء الاصطناعي:
-            {json.dumps(order_data, ensure_ascii=False, indent=2)}
-            """
         if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
     tg_response = requests.post(
         f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
