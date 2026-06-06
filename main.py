@@ -141,13 +141,13 @@ async def webhook(request: Request):
 ✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة.
 """
 
-       
+        
         elif any(word in message_text for word in ["التوصيل", "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
             reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
 
 يشمل جميع مناطق كربلاء 🌹"""
 
-        else:
+        elif len(message_text) > 15 and any(char.isdigit() for char in message_text):
             order_data = analyze_order(message_text)
         
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
