@@ -141,41 +141,7 @@ async def webhook(request: Request):
 ✍️ للتثبيت أرسل اسم المنتج المطلوب وسنزودك بالتفاصيل مباشرة.
 """
 
-        elif "سخان وسط" in message_text:
-            user_orders[sender_id] = "سخان وسط"
-            product = user_orders[sender_id]
-            reply = """👥 يكفي 5–7 أشخاص
-
-💰 السعر: 15000 د.ع
-
-📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
-
-        elif "سخان صغير" in message_text:
-            user_orders[sender_id] = "سخان صغير"
-            product = user_orders[sender_id]
-            reply = """👥 يكفي 3–4 أشخاص
-
-💰 السعر: 8000 د.ع
-
-📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
-
-        elif "سخان كبير" in message_text:
-            user_orders[sender_id] = "سخان كبير"
-            product = user_orders[sender_id]
-            reply = """👥 يكفي 8–11 شخص
-
-💰 السعر: 25000 د.ع
-
-📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
-
-        elif "فردي" in message_text:
-            user_orders[sender_id] = "فردي"
-            product = user_orders[sender_id]
-            reply = """👤 يكفي شخص واحد
-
-💰 السعر: 2500 د.ع
-
-📞📍 للتثبيت يرجى إرسال رقم الهاتف والعنوان."""
+       
 
         elif any(word in message_text for word in ["التوصيل", "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
             reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
