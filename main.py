@@ -182,7 +182,7 @@ async def webhook(request: Request):
 
 يشمل جميع مناطق كربلاء 🌹"""
 
-         elif sender_id in user_orders and user_orders.get(sender_id) != "منتج غير محدد" and len(message_text) > 10 and any(char.isdigit() for char in message_text):
+         elif sender_id in user_orders and len(message_text) > 10 and any(char.isdigit() for char in message_text):
             product = user_orders.get(sender_id, "منتج غير محدد")
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
