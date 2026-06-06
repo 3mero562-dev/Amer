@@ -122,7 +122,11 @@ async def webhook(request: Request):
         product = user_orders.get(sender_id, "منتج غير محدد")
         print("ALL ORDERS =", user_orders)
         print("PRODUCT =", product)
-        reply = "🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برساله واحدة"
+        reply = "🍪 لتثبيت الطلب يرجى إرسال جميع التفاصيل برسالة واحدة:
+
+ 🍪المنتجات المطلوبة
+📞 رقم الهاتف
+📍 العنوان بالتفصيل"
 
         if sender_id not in seen_users or any(word in message_text for word in greetings):
             seen_users.add(sender_id)
@@ -202,7 +206,7 @@ async def webhook(request: Request):
 
         elif any(word in message_text for word in ["متى يوصل", "شكد وقت التوصيل", "وقت التوصيل", "التوصيل شكد", "بعد شكد ","شكد ويوصلني", "شكد يوصل", "شكد ويوصلني الطلب"]):
             reply = "🚚 مدة التوصيل من ساعة إلى ساعتين بعد تأكيد الحجز ❤️🍪"
-        elif len(message_text) > 15:
+        elif "07" in message_text and len(message_text) > 15:
             order_data = analyze_order(message_text)
             telegram_message = f"""
             📦 طلب جديد من الانستغرام
