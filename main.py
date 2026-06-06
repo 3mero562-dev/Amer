@@ -3,6 +3,7 @@ from fastapi.responses import PlainTextResponse
 from openai import OpenAI
 import requests
 import os
+import json
 OPEN_API_KEY = os.getevn("OPEN_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -16,6 +17,33 @@ INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
+def analyze_order(message_text):
+    response = client.chat.completions.create(
+        model="gpt-4.1-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": """
+استخرج الطلب من رسالة الزبون وأرجع JSON فقط.
+
+مثال:
+{
+  "items": [
+    {"name":"سخان وسط","qty":1},
+    {"name":"دونات","qty":2},
+    {"name":"موهيتو","qty":2}
+  ]
+}
+"""
+            },
+            {
+                "role": "user",
+                "content": message_text
+            }
+        ]
+    )
+
+    return json.loads(response.choices[0].message.content)
 
 @app.get("/")
 def home():
