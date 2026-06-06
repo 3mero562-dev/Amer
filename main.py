@@ -155,6 +155,7 @@ async def webhook(request: Request):
             "كبيرة"
         ]):
          user_orders[sender_id] = message_text
+         print("SAVED =", user_orders)
          product = message_text
          reply = "🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة"
         elif any(word in message_text for word in [ "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
