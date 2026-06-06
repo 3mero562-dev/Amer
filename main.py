@@ -96,6 +96,7 @@ async def webhook(request: Request):
         print("MESSAGE TEXT =", message_text)
         print("SENDER ID =", sender_id)
         order_data = {"items": []}
+        telegram_message = None
         greetings = ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]
         product = user_orders.get(sender_id, "منتج غير محدد")
         reply = "🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برساله واحدة"
@@ -167,7 +168,7 @@ async def webhook(request: Request):
                 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
                 
 
-        if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+        if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
             tg_response = requests.post(
             f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
             json={
