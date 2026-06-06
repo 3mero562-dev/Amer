@@ -169,9 +169,9 @@ async def webhook(request: Request):
                 
 
         if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-    tg_response = requests.post(
-        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-        json={
+            tg_response = requests.post(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            json={
             "chat_id": TELEGRAM_CHAT_ID,
             "text": telegram_message
         },
