@@ -94,7 +94,7 @@ async def webhook(request: Request):
 
         hour = datetime.now().hour
         
-        if hour < 14 or hour >= 22:
+        if hour < 0 or hour >= 24:
             reply = """
         نعتذر منكم 🙏
         
@@ -109,6 +109,7 @@ async def webhook(request: Request):
         
         شكراً لاختياركم كوكيز لارين ❤️🍪
         """
+        return {"status": "closed_hours"}
         print("SENDER =", event.get("sender"))
         print("RECIPIENT =", event.get("recipient"))
         if not sender_id or not message_text:
