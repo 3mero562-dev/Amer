@@ -188,32 +188,6 @@ async def webhook(request: Request):
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
 
-        order_data = {"items": []}
-        telegram_message = f"""
-            
-            📦 طلب جديد من الانستغرام
-            
-            🍪 المنتج:
-            {product}
-            
-            👤 User ID:
-            {sender_id}
-            
-            📱 الرقم والعنوان:
-            {message_text}
-            🤖 تحليل الذكاء الاصطناعي:
-            {order_data}
-            """
-        if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-            tg_response = requests.post(
-                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-                json={
-                    "chat_id": TELEGRAM_CHAT_ID,
-                    "text": telegram_message
-                },
-                timeout=10
-            )
-
             print("TELEGRAM STATUS =", tg_response.status_code)
             print("TELEGRAM RESPONSE =", tg_response.text)
         else:
