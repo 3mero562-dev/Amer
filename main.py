@@ -171,7 +171,8 @@ async def webhook(request: Request):
             
             👤 User ID:
             {sender_id}
-            
+            🍪 المنتج:
+            {product}
             📱 رسالة الزبون:
             {message_text}
             
