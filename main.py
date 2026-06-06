@@ -11,7 +11,7 @@ except Exception:
 
     class _RequestsFallback:
         @staticmethod
-        def post(url, json=None, timeout=None):
+         post(url, json=None, timeout=None):
             # httpx.post returns a Response object similar enough for our usage
             return httpx.post(url, json=json, timeout=timeout)
 
@@ -58,12 +58,12 @@ def analyze_order(message_text):
     return json.loads(response.choices[0].message.content)
 
 @app.get("/")
-def home():
+ home():
     return {"status": "working"}
 
 
 @app.get("/webhook")
-async def verify_webhook(request: Request):
+async  verify_webhook(request: Request):
     mode = request.query_params.get("hub.mode")
     token = request.query_params.get("hub.verify_token")
     challenge = request.query_params.get("hub.challenge")
@@ -75,7 +75,7 @@ async def verify_webhook(request: Request):
 
 seen_users = set()
 @app.post("/webhook")
-async def webhook(request: Request):
+async  webhook(request: Request):
     data = await request.json()
 
     print("NEW REQUEST")
@@ -94,7 +94,7 @@ async def webhook(request: Request):
 
         hour = datetime.now().hour
         
-        if hour < 0 or hour >= 24:
+        if hour < 15 or hour >= 22:
             reply = """
         نعتذر منكم 🙏
         
@@ -109,7 +109,8 @@ async def webhook(request: Request):
         
         شكراً لاختياركم كوكيز لارين ❤️🍪
         """
-       # return {"status": "closed_hours"}
+       # send_instagram_message(sender_id, reply)
+        return {"status": "closed_hours"}
         print("SENDER =", event.get("sender"))
         print("RECIPIENT =", event.get("recipient"))
         if not sender_id or not message_text:
