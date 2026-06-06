@@ -122,11 +122,11 @@ async def webhook(request: Request):
         product = user_orders.get(sender_id, "منتج غير محدد")
         print("ALL ORDERS =", user_orders)
         print("PRODUCT =", product)
-            reply = "🍪 لتثبيت الطلب يرجى إرسال جميع التفاصيل برسالة واحدة:
+            reply = """🍪 لتثبيت الطلب يرجى إرسال جميع التفاصيل برسالة واحدة:
 
  🍪المنتجات المطلوبة
 📞 رقم الهاتف
-📍 العنوان بالتفصيل"
+📍 العنوان بالتفصيل"""
 
         if sender_id not in seen_users or any(word in message_text for word in greetings):
             seen_users.add(sender_id)
