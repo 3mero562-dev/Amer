@@ -150,23 +150,23 @@ async def webhook(request: Request):
 
         elif len(message_text) > 15 and any(char.isdigit() for char in message_text):
             order_data = analyze_order(message_text)
-        telegram_message = f"""
-        📦 طلب جديد من الانستغرام
-        
-        👤 User ID:
-        {sender_id}
-        
-        📱 رسالة الزبون:
-        {message_text}
-        
-        🤖 تحليل الذكاء الاصطناعي:
-        {json.dumps(order_data, ensure_ascii=False, indent=2)}
-        """
+            telegram_message = f"""
+            📦 طلب جديد من الانستغرام
+            
+            👤 User ID:
+            {sender_id}
+            
+            📱 رسالة الزبون:
+            {message_text}
+            
+            🤖 تحليل الذكاء الاصطناعي:
+            {json.dumps(order_data, ensure_ascii=False, indent=2)}
+            """
+                        
+            reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
                     
-        reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
-                
-                🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
-                
+                    🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
+                    
 
         if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
             tg_response = requests.post(
@@ -182,7 +182,7 @@ async def webhook(request: Request):
             print("INSTAGRAM ERROR: Missing INSTAGRAM_ACCESS_TOKEN")
             return {"status": "error", "message": "Missing Instagram access token"}
 
-        meta_response = requests.post(
+            meta_response = requests.post(
             f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
             json={
                 "recipient": {"id": sender_id},
