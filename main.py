@@ -1,7 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
+from openai import OpenAI
 import requests
 import os
+OPEN_API_KEY = os.getevn("OPEN_API_KEY")
+client = OpenAI(api_key=OPENAI_API_KEY)
+
 
 app = FastAPI()
 
