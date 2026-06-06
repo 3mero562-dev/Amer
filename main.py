@@ -1,11 +1,23 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from openai import OpenAI
-import requests
 import os
 import json
-OPEN_API_KEY = os.getevn("OPEN_API_KEY")
-client = OpenAI(api_key=OPENAI_API_KEY)
+try:
+    import requests
+except Exception:
+    # Fallback to httpx if requests is not available or cannot be resolved
+    import httpx
+
+    class _RequestsFallback:
+        @staticmethod
+        def post(url, json=None, timeout=None):
+            # httpx.post returns a Response object similar enough for our usage
+            return httpx.post(url, json=json, timeout=timeout)
+
+    requests = _RequestsFallback()
+OPEN_API_KEY = os.getenv("OPEN_API_KEY")
+client = OpenAI(api_key=OPEN_API_KEY)
 
 
 app = FastAPI()
@@ -85,6 +97,8 @@ async def webhook(request: Request):
         print("SENDER ID =", sender_id)
 
         greetings = ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]
+        product = user_orders.get(sender_id, "منتج غير محدد")
+        reply = "🍪 ارسل اسم المنتج فقط للتثبيت"
 
         if sender_id not in seen_users or any(word in message_text for word in greetings):
             seen_users.add(sender_id)
@@ -129,6 +143,7 @@ async def webhook(request: Request):
 
         elif "سخان وسط" in message_text:
             user_orders[sender_id] = "سخان وسط"
+            product = user_orders[sender_id]
             reply = """👥 يكفي 5–7 أشخاص
 
 💰 السعر: 15000 د.ع
@@ -137,6 +152,7 @@ async def webhook(request: Request):
 
         elif "سخان صغير" in message_text:
             user_orders[sender_id] = "سخان صغير"
+            product = user_orders[sender_id]
             reply = """👥 يكفي 3–4 أشخاص
 
 💰 السعر: 8000 د.ع
@@ -145,6 +161,7 @@ async def webhook(request: Request):
 
         elif "سخان كبير" in message_text:
             user_orders[sender_id] = "سخان كبير"
+            product = user_orders[sender_id]
             reply = """👥 يكفي 8–11 شخص
 
 💰 السعر: 25000 د.ع
@@ -153,6 +170,7 @@ async def webhook(request: Request):
 
         elif "فردي" in message_text:
             user_orders[sender_id] = "فردي"
+            product = user_orders[sender_id]
             reply = """👤 يكفي شخص واحد
 
 💰 السعر: 2500 د.ع
@@ -166,13 +184,12 @@ async def webhook(request: Request):
 
         elif sender_id in user_orders and len(message_text) > 10 and any(char.isdigit() for char in message_text):
             product = user_orders.get(sender_id, "منتج غير محدد")
-
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
 
-         order_data = {"items": []}
-            telegram_message = f"""
+        order_data = {"items": []}
+        telegram_message = f"""
             
             📦 طلب جديد من الانستغرام
             
@@ -187,25 +204,22 @@ async def webhook(request: Request):
             🤖 تحليل الذكاء الاصطناعي:
             {order_data}
             """
-            if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-                tg_response = requests.post(
-                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-                    json={
-                        "chat_id": TELEGRAM_CHAT_ID,
-                        "text": telegram_message
-                    },
-                    timeout=10
-                )
+        if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+            tg_response = requests.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                json={
+                    "chat_id": TELEGRAM_CHAT_ID,
+                    "text": telegram_message
+                },
+                timeout=10
+            )
 
-                print("TELEGRAM STATUS =", tg_response.status_code)
-                print("TELEGRAM RESPONSE =", tg_response.text)
-            else:
-                print("TELEGRAM ERROR: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID")
-
-            user_orders.pop(sender_id, None)
-
+            print("TELEGRAM STATUS =", tg_response.status_code)
+            print("TELEGRAM RESPONSE =", tg_response.text)
         else:
-            reply = "🍪 ارسل اسم المنتج فقط للتثبيت"
+            print("TELEGRAM ERROR: Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID")
+
+        user_orders.pop(sender_id, None)
 
         if not INSTAGRAM_ACCESS_TOKEN:
             print("INSTAGRAM ERROR: Missing INSTAGRAM_ACCESS_TOKEN")
