@@ -55,7 +55,7 @@ async def webhook(request: Request):
         greetings = ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]
 
         if sender_id not in seen_users or any(word in message_text for word in greetings):
-        seen_users.add(sender_id)
+            seen_users.add(sender_id)
 
     reply = """
 🍪❤️ هلا وغلا
