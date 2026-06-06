@@ -94,7 +94,7 @@ async def webhook(request: Request):
 
         hour = datetime.now().hour
         
-        if hour < 23 or hour >= 20:
+        if hour < 20 or hour >= 23:
             reply = """
         نعتذر منكم 🙏
         
