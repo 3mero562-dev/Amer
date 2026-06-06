@@ -168,6 +168,25 @@ async def webhook(request: Request):
 
 ✍️ 🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة.
 """
+         elif "07" in message_text and len(message_text) > 15:
+            order_data = analyze_order(message_text)
+            telegram_message = f"""
+            📦 طلب جديد من الانستغرام
+            
+            👤 User ID:
+            {sender_id}
+            
+            📦 الطلب الكامل:
+
+            {message_text}
+            
+        
+            """
+                        
+            reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
+                    
+                    🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
+                        
         elif any(word in message_text for word in [
             "سخان صغير",
             "سخان وسط",
@@ -203,25 +222,7 @@ async def webhook(request: Request):
 
         elif any(word in message_text for word in ["متى يوصل", "شكد وقت التوصيل", "وقت التوصيل", "التوصيل شكد", "بعد شكد ","شكد ويوصلني", "شكد يوصل", "شكد ويوصلني الطلب"]):
             reply = "🚚 مدة التوصيل من ساعة إلى ساعتين بعد تأكيد الحجز ❤️🍪"
-        elif "07" in message_text and len(message_text) > 15:
-            order_data = analyze_order(message_text)
-            telegram_message = f"""
-            📦 طلب جديد من الانستغرام
-            
-            👤 User ID:
-            {sender_id}
-            
-            📦 الطلب الكامل:
-
-            {message_text}
-            
-        
-            """
-                        
-            reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
-                    
-                    🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
-                    
+       
 
         if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
             tg_response = requests.post(
