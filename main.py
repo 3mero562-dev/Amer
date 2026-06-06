@@ -100,6 +100,7 @@ async def webhook(request: Request):
         greetings = ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]
         product = user_orders.get(sender_id, "منتج غير محدد")
         reply = "🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برساله واحدة"
+        print("PRODUCT =", product)
 
         if sender_id not in seen_users or any(word in message_text for word in greetings):
             seen_users.add(sender_id)
