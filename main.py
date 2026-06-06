@@ -89,7 +89,8 @@ async def webhook(request: Request):
 
         message_text = event["message"].get("text", "").strip().lower()
         sender_id = event.get("sender", {}).get("id")
-
+        print("SENDER =", event.get("sender"))
+        print("RECIPIENT =", event.get("recipient"))
         if not sender_id or not message_text:
             return {"status": "ignored"}
 
