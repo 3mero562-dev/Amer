@@ -182,14 +182,14 @@ async def webhook(request: Request):
             print("INSTAGRAM ERROR: Missing INSTAGRAM_ACCESS_TOKEN")
             return {"status": "error", "message": "Missing Instagram access token"}
 
-            meta_response = requests.post(
-            f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
-            json={
-                "recipient": {"id": sender_id},
-                "message": {"text": reply}
-            },
-            timeout=10
-        )
+        meta_response = requests.post(
+        f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
+        json={
+            "recipient": {"id": sender_id},
+            "message": {"text": reply}
+        },
+        timeout=10
+    )
 
         print("META STATUS =", meta_response.status_code)
         print("META RESPONSE =", meta_response.text)
