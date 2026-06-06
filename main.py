@@ -90,6 +90,25 @@ async def webhook(request: Request):
 
         message_text = event["message"].get("text", "").strip().lower()
         sender_id = event.get("sender", {}).get("id")
+        from datetime import datetime
+
+        hour = datetime.now().hour
+        
+        if hour < 15 or hour >= 22:
+            reply = """
+        نعتذر منكم 🙏
+        
+        حالياً التوصيل متوقف، ويبدأ يومياً من الساعة 3:00 عصراً إلى 10:00 مساءً 🌙
+        
+        ✨ للحجز المسبق يرجى إرسال المعلومات التالية:
+        
+        📏 الحجم أو الطلب:
+        📞 رقم الهاتف:
+        📍 العنوان بالتفصيل:
+        ⏰ الوقت المطلوب للاستلام أو التوصيل:
+        
+        شكراً لاختياركم كوكيز لارين ❤️🍪
+        """
         print("SENDER =", event.get("sender"))
         print("RECIPIENT =", event.get("recipient"))
         if not sender_id or not message_text:
