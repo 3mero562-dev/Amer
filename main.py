@@ -112,6 +112,7 @@ async def webhook(request: Request):
         """
        
         print("CLOSED HOURS ACTIVE")
+            return {"status": "closed_hours"}
         print("SENDER =", event.get("sender"))
         print("RECIPIENT =", event.get("recipient"))
         if not sender_id or not message_text:
