@@ -315,4 +315,24 @@ async def webhook(request: Request):
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
 
+    if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+        requests.post(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            json={
+                "chat_id": TELEGRAM_CHAT_ID,
+                "text": telegram_message
+            },
+            timeout=10
+        )
 
+    if INSTAGRAM_ACCESS_TOKEN:
+        requests.post(
+            f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
+            json={
+                "recipient": {"id": sender_id},
+                "message": {"text": reply}
+            },
+            timeout=10
+        )
+
+    return {"status": "ok"}
