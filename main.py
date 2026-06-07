@@ -189,18 +189,7 @@ async def webhook(request: Request):
     print("CURRENT HOUR =", hour)
 
    
-        meta_response = requests.post(
-            f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
-            json={
-                "recipient": {"id": sender_id},
-                "message": {"text": reply}
-            },
-            timeout=10
-        )
-
-        print("CLOSED HOURS ACTIVE")
-        return {"status": "closed_hours"}
-
+       
     print("SENDER =", event.get("sender"))
     print("RECIPIENT =", event.get("recipient"))
 
