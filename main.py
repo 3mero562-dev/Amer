@@ -292,10 +292,7 @@ async def webhook(request: Request):
 """
     elif ("07" in message_text or "٠٧" in message_text) and len(message_text) > 15:
 
-        result = analyze_order(message_text)
-
-    try:
-        order_data = json.loads(result)
+        order_data = analyze_order(message_text)
 
         prices = {
             "سخان فردي": 2500,
