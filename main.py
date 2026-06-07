@@ -185,6 +185,31 @@ async def webhook(request: Request):
 ✍️ 🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة.
 """
         elif ("07" in message_text or "٠٧" in message_text) and len(message_text) > 15 and product != "منتج غير محدد":
+
+            order_data = analyze_order(message_text)
+
+            prices = {
+                "سخان فردي": 2500,
+                "سخان صغير": 8000,
+                "سخان وسط": 15000,
+                "سخان كبير": 25000,
+                "دونات": 1000,
+                "كرواسون": 2000,
+                "موهيتو": 2500
+            }
+
+            delivery_price = 2000
+            total_price = 0
+
+            for item in order_data.get("items", []):
+                name = item.get("name")
+                qty = item.get("qty", 0)
+
+                if name in prices:
+                    total_price += prices[name] * qty
+
+            grand_total = total_price + delivery_price
+
             telegram_message = f"""
             📦 طلب جديد من الانستغرام
             
@@ -195,9 +220,8 @@ async def webhook(request: Request):
 
             {message_text}
             
-        
-            """
-                        
+        """
+
             reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
                     
                     🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
