@@ -93,6 +93,7 @@ async def webhook(request: Request):
         from datetime import datetime
 
         hour = datetime.now().hour
+        print("CURRENT HOUR =", hour)
         
         if hour < 15 or hour >= 22:
             reply = """
