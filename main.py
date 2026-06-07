@@ -116,7 +116,7 @@ async def webhook(request: Request):
 
     hour = (datetime.now() + timedelta(hours=3)).hour
 
-    if hour < 0 or hour >= 24:
+    if hour < 14 or hour >= 22:
         reply = """نعتذر منكم 🙏
 
 حالياً التوصيل متوقف، ويبدأ يومياً من الساعة 2:00 إلى 10:00 مساءً 🌙
@@ -142,20 +142,32 @@ async def webhook(request: Request):
         result = ask_ai(message_text)
 
         if "items" in result:
-            prices = {
+
+            has_phone = ("07" in message_text or "٠٧" in message_text)
+
+            if not has_phone:
+                reply = """🍪 لتثبيت الطلب يرجى إرسال جميع التفاصيل برسالة واحدة:
+
+🍪 المنتجات المطلوبة
+📞 رقم الهاتف
+📍 العنوان بالتفصيل"""
+            else:
+                prices = {
                 "سخان فردي":2500,"سخان صغير":8000,"سخان وسط":15000,"سخان كبير":25000,
                 "كيكة كوكيز فردي":2500,"كيكة كوكيز صغير":8000,"كيكة كوكيز وسط":15000,"كيكة كوكيز كبير":25000,
-                "دونات":1000,"كرواسون":2000,"موهيتو":2500
+                "دونات":1000,"دونات نوتيلا":1000,"دونات نوتيلا بيضاء":1000,"دونات فراولة":1000,
+                "كرواسون":2000,"كرواسون شوكلا":2000,"كرواسون لوتس":2000,"كرواسون كراميل":2000,
+                "موهيتو":2500,"بلو بيري":2500,"ليمون نعناع":2500,"صودا":2500
             }
 
-            total = 2000
-            for item in result["items"]:
-                total += prices.get(item.get("name",""),0) * item.get("qty",1)
+                total = 2000
+                for item in result["items"]:
+                    total += prices.get(item.get("name",""),0) * item.get("qty",1)
 
-            reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"
+                reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"
 
-            if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-                requests.post(
+                if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+                    requests.post(
                     f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
                     json={"chat_id": TELEGRAM_CHAT_ID, "text": message_text}
                 )
