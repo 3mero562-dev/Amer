@@ -188,8 +188,8 @@ async def webhook(request: Request):
     hour = (datetime.now() + timedelta(hours=3)).hour
     print("CURRENT HOUR =", hour)
 
-    if hour < 0 or hour >= 24:
-        reply = """
+  #  if hour < 0 or hour >= 24:
+   #     reply = """
 نعتذر منكم 🙏
 
 حالياً التوصيل متوقف، ويبدأ يومياً من الساعة 11:00 صباحاً إلى 10:00 مساءً 🌙
