@@ -344,5 +344,5 @@ async def webhook(request: Request):
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
 
-    except Exception:
-        reply = result
+    #except Exception:
+     #   reply = result
