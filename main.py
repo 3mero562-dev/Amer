@@ -11,9 +11,9 @@ except Exception:
 
     class _RequestsFallback:
             @staticmethod
-             def post(url, json=None, timeout=None):
+            def post(url, json=None, timeout=None):
             # httpx.post returns a Response object similar enough for our usage
-            return httpx.post(url, json=json, timeout=timeout)
+             return httpx.post(url, json=json, timeout=timeout)
 
     requests = _RequestsFallback()
 OPEN_API_KEY = os.getenv("OPEN_API_KEY")
