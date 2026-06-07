@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from openai import OpenAI
+from datetime import datetime, timedelta
 import os, json, requests
 
 app = FastAPI()
@@ -12,33 +13,77 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 client = OpenAI(api_key=OPEN_API_KEY)
+seen_users = set()
 
-def ask_ai(message_text):
+MENU_TEXT = """🍪❤️ هلا وغلا
+
+🤤🔥 نورتوا كوكيز لارين
+
+🍪 - سخان كيكة كوكيز -
+
+• فردي (شخص) — 2,500 د.ع
+• صغيرة (3-4 أشخاص) — 8,000 د.ع
+• وسط (5-7 أشخاص) — 15,000 د.ع
+• كبيرة (8-11 شخص) — 25,000 د.ع
+
+🥐 - الكرواسون المحشي -
+
+🍫 شوكلا — 2,000 د.ع
+🧀 لوتس — 2,000 د.ع
+🍯 كراميل — 2,000 د.ع
+
+🍩 - الدونات -
+
+🤍 نوتيلا بيضاء — 1,000 د.ع
+🍫 نوتيلا — 1,000 د.ع
+🍓 فراولة — 1,000 د.ع
+
+🍹 - المشروبات -
+
+🍋 موهيتو
+🥤 بلو بيري
+🍃 ليمون نعناع
+🥤 صودا
+
+💰 سعر المشروبات: 2,500 د.ع
+
+🔥 الكمية محدودة يومياً
+
+✍️ 🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة.
+"""
+
+def ask_ai(msg):
     response = client.chat.completions.create(
         model="gpt-4.1-mini",
         messages=[
             {
-                "role": "system",
-                "content": """
-أنت موظف مبيعات لمتجر كوكيز لارين.
+                "role":"system",
+                "content":"""
+أنت موظف متجر كوكيز لارين.
 
-إذا كانت الرسالة طلب وفيها رقم هاتف وعنوان:
-أرجع JSON فقط بهذا الشكل:
-{"items":[{"name":"اسم المنتج","qty":1}]}
+لا تبدأ الرد بكلمة مرحبا أو أهلا.
 
-إذا كانت الرسالة سؤال أو استفسار أو ترحيب:
-أجب كنفس موظف المتجر.
+إذا كانت الرسالة طلب مكتمل فيه طلب + رقم هاتف + عنوان:
+أرجع JSON فقط:
+{"items":[{"name":"سخان صغير","qty":1}]}
+
+إذا كانت الرسالة سؤال:
+أجب باختصار ومن معلومات المتجر فقط.
+
+ممنوع اختراع منتجات أو أسعار.
 
 سعر التوصيل 2000 دينار.
-مدة التوصيل ساعتين.
+مدة التوصيل ساعتان.
+
+طرق الدفع:
+ماستر كارد 917371759965
+زين كاش 07868008181
 """
             },
-            {"role": "user", "content": message_text}
+            {"role":"user","content":msg}
         ]
     )
-
     content = response.choices[0].message.content
-
     try:
         return json.loads(content)
     except:
@@ -46,96 +91,80 @@ def ask_ai(message_text):
 
 @app.get("/")
 def home():
-    return {"status": "working"}
+    return {"status":"working"}
 
 @app.get("/webhook")
 async def verify_webhook(request: Request):
-    mode = request.query_params.get("hub.mode")
-    token = request.query_params.get("hub.verify_token")
-    challenge = request.query_params.get("hub.challenge")
-
-    if mode == "subscribe" and token == VERIFY_TOKEN:
-        return PlainTextResponse(challenge or "")
-
-    return {"error": "Invalid token"}
+    if request.query_params.get("hub.verify_token") == VERIFY_TOKEN:
+        return PlainTextResponse(request.query_params.get("hub.challenge",""))
+    return {"error":"Invalid token"}
 
 @app.post("/webhook")
 async def webhook(request: Request):
-
     data = await request.json()
 
     try:
         event = data["entry"][0]["messaging"][0]
     except:
-        return {"status": "ignored"}
+        return {"status":"ignored"}
 
-    if event.get("message", {}).get("is_echo"):
-        return {"status": "echo"}
-
-    sender_id = event.get("sender", {}).get("id")
-    message_text = event.get("message", {}).get("text", "")
+    sender_id = event.get("sender",{}).get("id")
+    message_text = event.get("message",{}).get("text","").strip()
 
     if not sender_id or not message_text:
-        return {"status": "ignored"}
+        return {"status":"ignored"}
 
-    result = ask_ai(message_text)
+    hour = (datetime.now() + timedelta(hours=3)).hour
 
-    telegram_message = None
+    if hour < 14 or hour >= 22:
+        reply = """نعتذر منكم 🙏
 
-    if "items" in result:
+حالياً التوصيل متوقف، ويبدأ يومياً من الساعة 2:00 إلى 10:00 مساءً 🌙
 
-        prices = {
-            "سخان فردي": 2500,
-            "سخان صغير": 8000,
-            "سخان وسط": 15000,
-            "سخان كبير": 25000,
-            "كيكة كوكيز فردي": 2500,
-            "كيكة كوكيز صغير": 8000,
-            "كيكة كوكيز وسط": 15000,
-            "كيكة كوكيز كبير": 25000,
-            "دونات": 1000,
-            "كرواسون": 2000,
-            "موهيتو": 2500
-        }
+✨ للحجز المسبق يرجى إرسال المعلومات التالية:
 
-        total = 2000
+📏 الحجم أو الطلب:
+📞 رقم الهاتف:
+📍 العنوان بالتفصيل:
+⏰ الوقت المطلوب للاستلام أو التوصيل:
 
-        for item in result["items"]:
-            name = item.get("name")
-            qty = item.get("qty", 1)
-
-            if name in prices:
-                total += prices[name] * qty
-
-        reply = f"✅ تم تثبيت طلبكم بنجاح\\n💰 السعر الكلي: {total} د.ع"
-
-        telegram_message = f"""
-طلب جديد
-
-User:
-{sender_id}
-
-{message_text}
-"""
-
+شكراً لاختياركم كوكيز لارين ❤️🍪"""
+    elif sender_id not in seen_users:
+        seen_users.add(sender_id)
+        reply = MENU_TEXT
+    elif any(x in message_text for x in ["المنيو","الاسعار","الأسعار","كل الأسعار"]):
+        reply = MENU_TEXT
+    elif any(x in message_text for x in ["التوصيل","سعر التوصيل","اجور التوصيل","التوصيل مجاني"]):
+        reply = "🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️\n\nيشمل جميع مناطق كربلاء 🌹"
+    elif any(x in message_text for x in ["طرق الدفع","ماستر","زين كاش","الدفع"]):
+        reply = "💳 طرق الدفع المتوفرة:\n\n💠 ماستر كارد:\n917371759965\n\n📱 زين كاش:\n07868008181"
     else:
-        reply = result.get("reply", "أهلاً وسهلاً بكم")
+        result = ask_ai(message_text)
 
-    if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-        requests.post(
-            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-            json={
-                "chat_id": TELEGRAM_CHAT_ID,
-                "text": telegram_message
+        if "items" in result:
+            prices = {
+                "سخان فردي":2500,"سخان صغير":8000,"سخان وسط":15000,"سخان كبير":25000,
+                "كيكة كوكيز فردي":2500,"كيكة كوكيز صغير":8000,"كيكة كوكيز وسط":15000,"كيكة كوكيز كبير":25000,
+                "دونات":1000,"كرواسون":2000,"موهيتو":2500
             }
-        )
+
+            total = 2000
+            for item in result["items"]:
+                total += prices.get(item.get("name",""),0) * item.get("qty",1)
+
+            reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"
+
+            if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+                requests.post(
+                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                    json={"chat_id": TELEGRAM_CHAT_ID, "text": message_text}
+                )
+        else:
+            reply = result.get("reply","")
 
     requests.post(
         f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
-        json={
-            "recipient": {"id": sender_id},
-            "message": {"text": reply}
-        }
+        json={"recipient":{"id":sender_id},"message":{"text":reply}}
     )
 
-    return {"status": "ok"}
+    return {"status":"ok"}
