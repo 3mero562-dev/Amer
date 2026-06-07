@@ -91,6 +91,32 @@ async def webhook(request: Request):
         message_text = event["message"].get("text", "").strip().lower()
         sender_id = event.get("sender", {}).get("id")
 
+        thanks_words = [
+    "شكرا",
+    "شكراً",
+    "عاشت ايدكم",
+    "تسلم",
+    "تسلمين",
+    "حبيبي",
+    "ممنون",
+    "مشكور",
+    " عاشت ايدك",
+    "الله يبارك بيكم",
+    "ممتاز",
+    "تمام",
+    "اوكي",
+    "اوك",
+    "زين",
+    "حلو",
+    "ماقصرتوا",
+    "ما قصرتوا",
+    "كفو",
+    "روعة"
+]
+
+        if any(word in message_text for word in thanks_words):
+        return {"status": "ignored"}
+
         reply = ""
 
         from datetime import datetime, timedelta
@@ -227,6 +253,7 @@ async def webhook(request: Request):
 💰 السعر الكلي: {grand_total} د.ع
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
+            
                         
         elif any(word in message_text for word in [
             "سخان صغير",
