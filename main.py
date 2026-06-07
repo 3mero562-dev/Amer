@@ -115,7 +115,7 @@ async def webhook(request: Request):
 ]
 
         if any(word in message_text for word in thanks_words):
-        return {"status": "ignored"}
+            return {"status": "ignored"}
 
         reply = ""
 
