@@ -41,7 +41,7 @@ def analyze_order(message_text):
 مثال:
 {
   "items": [
-    {"name":"سخان وسط","qty":1},
+    {"name":"سخان ","qty":1},
     {"name":"دونات","qty":2},
     {"name":"موهيتو","qty":2}
   ]
