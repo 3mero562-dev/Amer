@@ -184,8 +184,7 @@ async def webhook(request: Request):
 
 ✍️ 🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة.
 """
-        elif "07" in message_text and len(message_text) > 15:
-            order_data = analyze_order(message_text)
+        elif "07" in message_text and len(message_text) > 15 and product != "منتج غير محدد":
             telegram_message = f"""
             📦 طلب جديد من الانستغرام
             
