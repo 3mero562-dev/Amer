@@ -10,10 +10,10 @@ except Exception:
     import httpx
 
     class _RequestsFallback:
-            @staticmethod
-            def post(url, json=None, timeout=None):
+        @staticmethod
+        def post(url, json=None, timeout=None):
             # httpx.post returns a Response object similar enough for our usage
-             return httpx.post(url, json=json, timeout=timeout)
+            return httpx.post(url, json=json, timeout=timeout)
 
     requests = _RequestsFallback()
 OPEN_API_KEY = os.getenv("OPEN_API_KEY")
@@ -58,12 +58,12 @@ def analyze_order(message_text):
     return json.loads(response.choices[0].message.content)
 
 @app.get("/")
- home():
+def home():
     return {"status": "working"}
 
 
 @app.get("/webhook")
-async  verify_webhook(request: Request):
+async def verify_webhook(request: Request):
     mode = request.query_params.get("hub.mode")
     token = request.query_params.get("hub.verify_token")
     challenge = request.query_params.get("hub.challenge")
@@ -75,7 +75,7 @@ async  verify_webhook(request: Request):
 
 seen_users = set()
 @app.post("/webhook")
-async  webhook(request: Request):
+async def webhook(request: Request):
     data = await request.json()
 
     print("NEW REQUEST")
