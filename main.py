@@ -90,12 +90,12 @@ async def webhook(request: Request):
 
         message_text = event["message"].get("text", "").strip().lower()
         sender_id = event.get("sender", {}).get("id")
-        from datetime import datetime
+        from datetime import datetime, timedelta
 
-        hour = datetime.now().hour
+        hour = (datetime.now() + timedelta(hours=3)).hour
         print("CURRENT HOUR =", hour)
         
-        if hour < 0 or hour >= 22:
+        if hour < 11 or hour >= 22:
             reply = """
         نعتذر منكم 🙏
         
