@@ -3,22 +3,21 @@ from fastapi.responses import PlainTextResponse
 from openai import OpenAI
 import os
 import json
+
 try:
     import requests
 except Exception:
-    # Fallback to httpx if requests is not available or cannot be resolved
     import httpx
 
     class _RequestsFallback:
         @staticmethod
         def post(url, json=None, timeout=None):
-            # httpx.post returns a Response object similar enough for our usage
             return httpx.post(url, json=json, timeout=timeout)
 
     requests = _RequestsFallback()
+
 OPEN_API_KEY = os.getenv("OPEN_API_KEY")
 client = OpenAI(api_key=OPEN_API_KEY)
-
 
 app = FastAPI()
 
@@ -36,18 +35,31 @@ def analyze_order(message_text):
             {
                 "role": "system",
                 "content": """
-فقط JSON لاستخراج الطلب من رسالة الزبون وأرجع:
+أنت موظف مبيعات لمتجر كوكيز لارين.
+
+إذا كانت الرسالة طلب شراء:
+أرجع JSON فقط بهذا الشكل:
 
 {
-                  "items": [
+  "items": [
     {"name":"اسم المنتج","qty":1}
   ]
 }
 
-إذا كتب الزبون "سخان" أو "كيكة كوكيز"
-فاستخرج الحجم من الرسالة.
+إذا كانت الرسالة سؤال أو استفسار:
+أجب بشكل طبيعي ومختصر.
 
-الأسماء المسموحة:
+معلومات المتجر:
+- سعر التوصيل 2000 د.ع
+- مدة التوصيل ساعتين
+
+الأحجام:
+فردي
+صغير
+وسط
+كبير
+
+المنتجات:
 
 سخان فردي
 سخان صغير
@@ -63,17 +75,35 @@ def analyze_order(message_text):
 كرواسون
 موهيتو
 
-أمثلة:
+إذا كتب الزبون:
+سخان صغير
+أرجع:
+{"items":[{"name":"سخان صغير","qty":1}]}
 
-"سخان صغير"
-=> {"name":"سخان صغير","qty":1}
+إذا كتب:
+كيكة كوكيز وسط
+أرجع:
+{"items":[{"name":"كيكة كوكيز وسط","qty":1}]}
 
-"كيكة كوكيز وسط"
-=> {"name":"كيكة كوكيز وسط","qty":1}
+إذا كتب:
+2 موهيتو و3 دونات
+أرجع:
+{"items":[
+{"name":"موهيتو","qty":2},
+{"name":"دونات","qty":3}
+]}
 
-"2 موهيتو و3 دونات"
-=> {"name":"موهيتو","qty":2}
-=> {"name":"دونات","qty":3}
+إذا سأل:
+التوصيل مجاني؟
+
+أجب:
+لا، سعر التوصيل 2000 د.ع.
+
+إذا سأل:
+شكد مدة التوصيل؟
+
+أجب:
+مدة التوصيل حوالي ساعتين.
 """
             },
             {
@@ -83,7 +113,7 @@ def analyze_order(message_text):
         ]
     )
 
-    return json.loads(response.choices[0].message.content)
+    return response.choices[0].message.content
 
 @app.get("/")
 def home():
@@ -102,6 +132,7 @@ async def verify_webhook(request: Request):
     return {"error": "Invalid token"}
 
 seen_users = set()
+
 @app.post("/webhook")
 async def webhook(request: Request):
     data = await request.json()
@@ -111,97 +142,118 @@ async def webhook(request: Request):
 
     try:
         event = data.get("entry", [{}])[0].get("messaging", [{}])[0]
-        if event.get("message", {}).get("is_echo"):
-            return {"status": "echo_ignored"}
-        if "message" not in event:
-            return {"status": "ignored"}
 
-        message_text = event["message"].get("text", "").strip().lower()
-        sender_id = event.get("sender", {}).get("id")
+    except (KeyError, IndexError):
+        return {"status": "ignored"}
 
-        thanks_words = [
-    "شكرا",
-    "شكراً",
-    "عاشت ايدكم",
-    "تسلم",
-    "تسلمين",
-    "حبيبي",
-    "ممنون",
-    "مشكور",
-    " عاشت ايدك",
-    "الله يبارك بيكم",
-    "ممتاز",
-    "تمام",
-    "اوكي",
-    "اوك",
-    "زين",
-    "حلو",
-    "ماقصرتوا",
-    "ما قصرتوا",
-    "كفو",
-    "روعة"
-]
+    if event.get("message", {}).get("is_echo"):
+        return {"status": "echo_ignored"}
 
-        if any(word in message_text for word in thanks_words):
-            return {"status": "ignored"}
+    if "message" not in event:
+        return {"status": "ignored"}
 
-        reply = ""
+    message_text = event["message"].get("text", "").strip().lower()
+    sender_id = event.get("sender", {}).get("id")
 
-        from datetime import datetime, timedelta
+    thanks_words = [
+        "شكرا",
+        "شكراً",
+        "عاشت ايدكم",
+        "تسلم",
+        "تسلمين",
+        "حبيبي",
+        "ممنون",
+        "مشكور",
+        "عاشت ايدك",
+        "الله يبارك بيكم",
+        "ممتاز",
+        "تمام",
+        "اوكي",
+        "اوك",
+        "زين",
+        "حلو",
+        "ماقصرتوا",
+        "ما قصرتوا",
+        "كفو",
+        "روعة"
+    ]
 
-        hour = (datetime.now() + timedelta(hours=3)).hour
-        print("CURRENT HOUR =", hour)
-        
-        if hour < 11 or hour >= 22:
-            reply = """
-        نعتذر منكم 🙏
-        
-        حالياً التوصيل متوقف، ويبدأ يومياً من الساعة 3:00 عصراً إلى 10:00 مساءً 🌙
-        
-        ✨ للحجز المسبق يرجى إرسال المعلومات التالية:
-        
-        📏 الحجم أو الطلب:
-        📞 رقم الهاتف:
-        📍 العنوان بالتفصيل:
-        ⏰ الوقت المطلوب للاستلام أو التوصيل:
-        
-        شكراً لاختياركم كوكيز لارين ❤️🍪
-        """
-       
-            meta_response = requests.post(
-        f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
-        json={
-        "recipient": {"id": sender_id},
-        "message": {"text": reply}
-    },
-        timeout=10
-)
+    if any(word in message_text for word in thanks_words):
+        return {"status": "ignored"}
 
-            print("CLOSED HOURS ACTIVE")
-            return {"status": "closed_hours"}
-        print("SENDER =", event.get("sender"))
-        print("RECIPIENT =", event.get("recipient"))
-        if not sender_id or not message_text:
-            return {"status": "ignored"}
+    reply = ""
 
-        print("MESSAGE TEXT =", message_text)
-        print("SENDER ID =", sender_id)
-        order_data = {"items": []}
-        telegram_message = None
-        greetings = ["مرحبا", "هلو", "السلام عليكم", "سلام", "اهلا", "أهلا", "هاي"]
-        product = user_orders.get(sender_id, "منتج غير محدد")
-        print("ALL ORDERS =", user_orders)
-        print("PRODUCT =", product)
-        reply = """🍪 لتثبيت الطلب يرجى إرسال جميع التفاصيل برسالة واحدة:
+    from datetime import datetime, timedelta
 
- 🍪المنتجات المطلوبة
+    hour = (datetime.now() + timedelta(hours=3)).hour
+    print("CURRENT HOUR =", hour)
+
+    if hour < 11 or hour >= 22:
+        reply = """
+نعتذر منكم 🙏
+
+حالياً التوصيل متوقف، ويبدأ يومياً من الساعة 11:00 صباحاً إلى 10:00 مساءً 🌙
+
+✨ للحجز المسبق يرجى إرسال المعلومات التالية:
+
+📏 الحجم أو الطلب:
+📞 رقم الهاتف:
+📍 العنوان بالتفصيل:
+⏰ الوقت المطلوب للاستلام أو التوصيل:
+
+شكراً لاختياركم كوكيز لارين ❤️🍪
+"""
+
+        meta_response = requests.post(
+            f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
+            json={
+                "recipient": {"id": sender_id},
+                "message": {"text": reply}
+            },
+            timeout=10
+        )
+
+        print("CLOSED HOURS ACTIVE")
+        return {"status": "closed_hours"}
+
+    print("SENDER =", event.get("sender"))
+    print("RECIPIENT =", event.get("recipient"))
+
+    if not sender_id or not message_text:
+        return {"status": "ignored"}
+
+    print("MESSAGE TEXT =", message_text)
+    print("SENDER ID =", sender_id)
+
+    order_data = {"items": []}
+    telegram_message = None
+
+    greetings = [
+        "مرحبا",
+        "هلو",
+        "السلام عليكم",
+        "سلام",
+        "اهلا",
+        "أهلا",
+        "هاي"
+    ]
+
+    product = user_orders.get(sender_id, "منتج غير محدد")
+
+    print("ALL ORDERS =", user_orders)
+    print("PRODUCT =", product)
+
+    reply = """🍪 لتثبيت الطلب يرجى إرسال جميع التفاصيل برسالة واحدة:
+
+🍪 المنتجات المطلوبة
 📞 رقم الهاتف
 📍 العنوان بالتفصيل"""
 
-        if sender_id not in seen_users or any(word in message_text for word in greetings):
-            seen_users.add(sender_id)
+    if sender_id not in seen_users or any(word in message_text for word in greetings):
 
-            reply = """
+        seen_users.add(sender_id)
+
+        reply = """
 🍪❤️ هلا وغلا
 
 🤤🔥 نورتوا كوكيز لارين
@@ -238,122 +290,59 @@ async def webhook(request: Request):
 
 ✍️ 🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة.
 """
-        elif ("07" in message_text or "٠٧" in message_text) and len(message_text) > 15:
+    elif ("07" in message_text or "٠٧" in message_text) and len(message_text) > 15:
 
-            order_data = analyze_order(message_text)
+        result = analyze_order(message_text)
 
-            prices = {
-                "سخان فردي": 2500,
-                "سخان صغير": 8000,
-                "سخان وسط": 15000,
-                "سخان كبير": 25000,
-                 "كوكيز فردي": 2500,
-                "كيكة كوكيز صغير": 8000,
-                "كيكة كوكيز وسط": 15000,
-                "كيكة كوكيز كبير": 25000,
-                 "كوكيز حجم فردي": 2500,
-                "كيكه كوكيز صغير": 8000,
-                "كيكه كوكيز وسط": 15000,
-                "كيكه كوكيز كبير": 25000,
-                "دونات": 1000,
-                "كرواسون": 2000,
-                "موهيتو": 2500
-            }
+    try:
+        order_data = json.loads(result)
 
-            delivery_price = 2000
-            total_price = 0
+        prices = {
+            "سخان فردي": 2500,
+            "سخان صغير": 8000,
+            "سخان وسط": 15000,
+            "سخان كبير": 25000,
+            "كوكيز فردي": 2500,
+            "كيكة كوكيز صغير": 8000,
+            "كيكة كوكيز وسط": 15000,
+            "كيكة كوكيز كبير": 25000,
+            "كوكيز حجم فردي": 2500,
+            "كيكه كوكيز صغير": 8000,
+            "كيكه كوكيز وسط": 15000,
+            "كيكه كوكيز كبير": 25000,
+            "دونات": 1000,
+            "كرواسون": 2000,
+            "موهيتو": 2500
+        }
 
-            for item in order_data.get("items", []):
-                name = item.get("name")
-                qty = item.get("qty", 0)
+        delivery_price = 2000
+        total_price = 0
 
-                if name in prices:
-                    total_price += prices[name] * qty
+        for item in order_data.get("items", []):
+            name = item.get("name")
+            qty = item.get("qty", 0)
 
-            grand_total = total_price + delivery_price
+            if name in prices:
+                total_price += prices[name] * qty
 
-            telegram_message = f"""
-            📦 طلب جديد من الانستغرام
-            
-            👤 User ID:
-            {sender_id}
-            
-            📦 الطلب الكامل:
+        grand_total = total_price + delivery_price
 
-            {message_text}
-            
-        """
+        telegram_message = f"""
+📦 طلب جديد من الانستغرام
 
-            reply = f"""✅ تم تثبيت طلبكم بنجاح ❤️🍪
+👤 User ID:
+{sender_id}
+
+📦 الطلب الكامل:
+
+{message_text}
+"""
+
+        reply = f"""✅ تم تثبيت طلبكم بنجاح ❤️🍪
 
 💰 السعر الكلي: {grand_total} د.ع
 
 🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
-            
-                        
-        elif any(word in message_text for word in [
-            "سخان صغير",
-            "سخان وسط",
-            "سخان كبير",
-            "فردي",
-            "صغيرة",
-            "وسط",
-            "موهيتو",
-        "بلو بيري",
-        "ليمون نعناع",
-        "صودا",
-        "نوتيلا",
-        "نوتيلا بيضاء",
-        "فراولة",
-            "كبيرة"
-]):
-            user_orders[sender_id] = message_text
-            product = message_text
 
-            reply = """
-🍪 لتثبيت الطلب يرجى إرسال جميع التفاصيل برسالة واحدة:
-
-1-حجم سخان كيكة الكوكيز
-2- رقم الهاتف 📞
-3- العنوان بلتفصيل 📍 
-    برسالة واحدة
-"""
-        elif any(word in message_text for word in [ "سعر التوصيل", "شكد التوصيل", "اجور التوصيل"]):
-            reply = """🚚 عرض التوصيل حالياً 2000 دينار فقط ❤️
-
-يشمل جميع مناطق كربلاء 🌹"""
-
-        elif any(word in message_text for word in ["شكد ويوصل", "شكد وقت التوصيل", "وقت التوصيل", "التوصيل شكد", "بعد شكد ","شكد ويوصلني", "شكد يوصل", "شكد ويوصلني الطلب"]):
-            reply = "🚚 مدة التوصيل من ساعة إلى ساعتين بعد تأكيد الحجز ❤️🍪"
-       
-
-        if telegram_message and TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-            tg_response = requests.post(
-            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-            json={
-            "chat_id": TELEGRAM_CHAT_ID,
-            "text": telegram_message
-        },
-        timeout=10
-    )
-
-        if not INSTAGRAM_ACCESS_TOKEN:
-            print("INSTAGRAM ERROR: Missing INSTAGRAM_ACCESS_TOKEN")
-            return {"status": "error", "message": "Missing Instagram access token"}
-
-        meta_response = requests.post(
-        f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
-        json={
-            "recipient": {"id": sender_id},
-            "message": {"text": reply}
-        },
-        timeout=10
-    )
-
-        print("META STATUS =", meta_response.status_code)
-        print("META RESPONSE =", meta_response.text)
-
-    except Exception as e:
-        print("ERROR:", e)
-
-    return {"status": "ok"}
+    except Exception:
+        reply = result
