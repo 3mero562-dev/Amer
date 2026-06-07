@@ -188,7 +188,7 @@ async def webhook(request: Request):
     hour = (datetime.now() + timedelta(hours=3)).hour
     print("CURRENT HOUR =", hour)
 
-    if hour < 11 or hour >= 22:
+    if hour < 0 or hour >= 24:
         reply = """
 نعتذر منكم 🙏
 
