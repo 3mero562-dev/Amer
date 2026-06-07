@@ -222,9 +222,11 @@ async def webhook(request: Request):
             
         """
 
-            reply = """✅ تم تثبيت طلبكم بنجاح ❤️🍪
-                    
-                    🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
+            reply = f"""✅ تم تثبيت طلبكم بنجاح ❤️🍪
+
+💰 السعر الكلي: {grand_total} د.ع
+
+🚚 سيتم التوصيل خلال ساعتين من تأكيد الحجز"""
                         
         elif any(word in message_text for word in [
             "سخان صغير",
