@@ -11,6 +11,7 @@ OPEN_API_KEY = os.getenv("OPEN_API_KEY")
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+RENDER_URL = "https://https://amer-qesh.onrender.com.onrender.com"
 
 client = OpenAI(api_key=OPEN_API_KEY)
 seen_users = set()
@@ -51,6 +52,28 @@ MENU_TEXT = """🍪❤️ هلا وغلا
 
 ✍️ 🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة.
 """
+
+if any(word in msg for word in ["فردي", "حجم فردي"]):
+    return "IMAGE:images/فردي.png"
+
+if any(word in msg for word in ["صغير", "حجم صغير"]):
+    return "IMAGE:images/صغير.png"
+
+if any(word in msg for word in ["وسط", "حجم وسط"]):
+    return "IMAGE:images/وسط.jpg"
+
+if any(word in msg for word in ["كبير", "حجم كبير"]):
+    return "IMAGE:images/كبير.png"
+
+if any(word in msg for word in ["اشوف الحجم", "أشوف الحجم", "صورة الحجم", "الاحجام", "الأحجام"]):
+    return """🍪 أي حجم تحب تشوف؟
+
+• فردي
+• صغير
+• وسط
+• كبير
+
+اكتب اسم الحجم وسأرسل صورته ❤️"""
 
 def ask_ai(msg):
     response = client.chat.completions.create(
@@ -418,6 +441,26 @@ async def webhook(request: Request):
         reply = "💳 طرق الدفع المتوفرة:\n\n💠 ماستر كارد:\n917371759965\n\n📱 زين كاش:\n07868008181"
     else:
         result = ask_ai(message_text)
+
+        if result.startswith("IMAGE:"):
+            image_path = result.replace("IMAGE:", "")
+
+            requests.post(
+        f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
+        json={
+            "recipient": {"id": sender_id},
+            "message": {
+                "attachment": {
+                    "type": "image",
+                    "payload": {
+                        "url": f"{RENDER_URL}/{image_path}"
+                    }
+                }
+            }
+        }
+    )
+
+            return {"status": "ok"}
         print("AI RESULT =", result)
 
         if "items" in result:
