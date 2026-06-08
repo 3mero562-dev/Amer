@@ -54,19 +54,19 @@ MENU_TEXT = """🍪❤️ هلا وغلا
 """
 
 if any(word in msg for word in ["فردي", "حجم فردي"]):
-return "IMAGE:images/فردي.png"
+    return "IMAGE:images/فردي.png"
 
 if any(word in msg for word in ["صغير", "حجم صغير"]):
-return "IMAGE:images/صغير.png"
+    return "IMAGE:images/صغير.png"
 
 if any(word in msg for word in ["وسط", "حجم وسط"]):
-return "IMAGE:images/وسط.jpg"
+    return "IMAGE:images/وسط.jpg"
 
 if any(word in msg for word in ["كبير", "حجم كبير"]):
-return "IMAGE:images/كبير.png"
+    return "IMAGE:images/كبير.png"
 
 if any(word in msg for word in ["اشوف الحجم", "أشوف الحجم", "صورة الحجم", "الاحجام", "الأحجام"]):
-return """🍪 أي حجم تحب تشوف؟
+    return """🍪 أي حجم تحب تشوف؟
 
 • فردي
 • صغير
