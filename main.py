@@ -247,6 +247,7 @@ async def webhook(request: Request):
             }
 
                 total = 2000
+                print(result)
                 for item in result["items"]:
                     total += prices.get(item.get("name",""),0) * item.get("qty",1)
 
