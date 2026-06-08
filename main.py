@@ -53,27 +53,6 @@ MENU_TEXT = """🍪❤️ هلا وغلا
 ✍️ 🍪 لتثبيت الطلب ارسل التفاصيل والرقم والعنوان برسالة واحدة.
 """
 
-if any(word in msg for word in ["فردي", "حجم فردي"]):
-    return "IMAGE:images/فردي.png"
-
-if any(word in msg for word in ["صغير", "حجم صغير"]):
-    return "IMAGE:images/صغير.png"
-
-if any(word in msg for word in ["وسط", "حجم وسط"]):
-    return "IMAGE:images/وسط.jpg"
-
-if any(word in msg for word in ["كبير", "حجم كبير"]):
-    return "IMAGE:images/كبير.png"
-
-if any(word in msg for word in ["اشوف الحجم", "أشوف الحجم", "صورة الحجم", "الاحجام", "الأحجام"]):
-    return """🍪 أي حجم تحب تشوف؟
-
-• فردي
-• صغير
-• وسط
-• كبير
-
-اكتب اسم الحجم وسأرسل صورته ❤️"""
 
 def ask_ai(msg):
     response = client.chat.completions.create(
@@ -108,6 +87,27 @@ def ask_ai(msg):
 "اريد صورة الحجم الوسط"
 
 كلها طلب صورة الحجم الوسط.
+if any(word in msg for word in ["فردي", "حجم فردي"]):
+    return "IMAGE:images/فردي.png"
+
+if any(word in msg for word in ["صغير", "حجم صغير"]):
+    return "IMAGE:images/صغير.png"
+
+if any(word in msg for word in ["وسط", "حجم وسط"]):
+    return "IMAGE:images/وسط.jpg"
+
+if any(word in msg for word in ["كبير", "حجم كبير"]):
+    return "IMAGE:images/كبير.png"
+
+if any(word in msg for word in ["اشوف الحجم", "أشوف الحجم", "صورة الحجم", "صور الاحجام", "صوره الأحجام"]):
+    return """🍪 أي حجم تحب تشوف؟
+
+• فردي
+• صغير
+• وسط
+• كبير
+
+اكتب اسم الحجم وسأرسل صورته ❤️"""
 
 جاوب كموظف مبيعات طبيعي باللهجة العراقية.
 
