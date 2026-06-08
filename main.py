@@ -100,7 +100,7 @@ if any(word in msg for word in ["كبير", "حجم كبير"]):
     return "IMAGE:images/كبير.png"
 
 if any(word in msg for word in ["اشوف الحجم", "أشوف الحجم", "صورة الحجم", "صور الاحجام", "صوره الأحجام"]):
-    return """ 🍪 أي حجم تحب تشوف؟
+    return """  أي حجم تحب تشوف؟
 
 • فردي
 • صغير
