@@ -427,7 +427,7 @@ async def webhook(request: Request):
 
     hour = (datetime.now() + timedelta(hours=3)).hour
 
-    if hour < 12 or hour >= 22:
+    if hour < 0 or hour >= 24:
         reply = """نعتذر منكم 🙏
 
 حالياً التوصيل متوقف، ويبدأ يومياً من الساعة 2:00 إلى 10:00 مساءً 🌙
