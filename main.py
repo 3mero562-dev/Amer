@@ -56,6 +56,36 @@ MENU_TEXT = """🍪❤️ هلا وغلا
 
 
 def ask_ai(msg):
+    if any(word in msg for word in ["فردي", "حجم فردي"]):
+    return "IMAGE:images/فردي.png"
+
+if any(word in msg for word in ["صغير", "حجم صغير"]):
+    return "IMAGE:images/صغير.png"
+
+if any(word in msg for word in ["وسط", "حجم وسط"]):
+    return "IMAGE:images/وسط.jpg"
+
+if any(word in msg for word in ["كبير", "حجم كبير"]):
+    return "IMAGE:images/كبير.png"
+
+if any(word in msg for word in [
+    "صور الاحجام",
+    "صور الأحجام",
+    "صورة الحجم",
+    "اشوف الحجم",
+    "اريد اشوف الاحجام"
+    "صورته"
+]):
+    return """
+أي حجم تحب تشوف؟
+
+• فردي
+• صغير
+• وسط
+• كبير
+
+اكتب اسم الحجم وارسلك صورته
+"""
     response = client.chat.completions.create(
         model="gpt-4.1-mini",
         messages=[
@@ -88,27 +118,7 @@ def ask_ai(msg):
 "اريد صورة الحجم الوسط"
 
 كلها طلب صورة الحجم الوسط.
-if any(word in msg for word in ["فردي", "حجم فردي"]):
-    return "IMAGE:images/فردي.png"
 
-if any(word in msg for word in ["صغير", "حجم صغير"]):
-    return "IMAGE:images/صغير.png"
-
-if any(word in msg for word in ["وسط", "حجم وسط"]):
-    return "IMAGE:images/وسط.jpg"
-
-if any(word in msg for word in ["كبير", "حجم كبير"]):
-    return "IMAGE:images/كبير.png"
-
-if any(word in msg for word in ["صور الاحجام", "صورة الحجم", "اشوف الحجم", "الاحجام"]):
-    return """
-فردي
-صغير
-وسط
-كبير
-
-اكتب اسم الحجم وارسلك صورته
-"""
 جاوب كموظف مبيعات طبيعي باللهجة العراقية.
 
 اذا سئل الزبون عن سعر منتج رد عليه بلمنتج واذكر سعر المنتج ممنوع اختراع منتجات أو أسعار.
