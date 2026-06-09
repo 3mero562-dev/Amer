@@ -4,6 +4,7 @@ from openai import OpenAI
 from datetime import datetime, timedelta
 import os, json, requests
 
+
 app = FastAPI()
 
 VERIFY_TOKEN = "amer123"
