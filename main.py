@@ -101,7 +101,7 @@ if any(word in msg for word in ["كبير", "حجم كبير"]):
     return "IMAGE:images/كبير.png"
 
 if any(word in msg for word in ["صور الاحجام", "صورة الحجم", "اشوف الحجم", "الاحجام"]):
-    return """أي حجم تحب تشوف؟
+    return """أي حجم تحب تشوف
 
 • فردي
 • صغير
