@@ -56,7 +56,7 @@ MENU_TEXT = """🍪❤️ هلا وغلا
 
 
 def ask_ai(msg):
-    if any(word in msg for word in ["فردي", "حجم فردي"]):
+if any(word in msg for word in ["فردي", "حجم فردي"]):
     return "IMAGE:images/فردي.png"
 
 if any(word in msg for word in ["صغير", "حجم صغير"]):
