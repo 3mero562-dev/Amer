@@ -452,7 +452,7 @@ async def webhook(request: Request):
     else:
         result = ask_ai(message_text)
 
-        if result.startswith("IMAGE:"):
+        if isinstance(result, str) and result.startswith("IMAGE:"):
             image_path = result.replace("IMAGE:", "")
 
             requests.post(
