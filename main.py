@@ -4,7 +4,6 @@ from openai import OpenAI
 from datetime import datetime, timedelta
 import os, json, requests
 
-
 app = FastAPI()
 
 VERIFY_TOKEN = "amer123"
@@ -12,10 +11,10 @@ OPEN_API_KEY = os.getenv("OPEN_API_KEY")
 INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-RENDER_URL = "https://https://amer-qesh.onrender.com.onrender.com"
-
+RENDER_URL = "https://amer-qesh.onrender.com"
 client = OpenAI(api_key=OPEN_API_KEY)
 seen_users = set()
+confirmed_orders = set()
 
 MENU_TEXT = """🍪❤️ هلا وغلا
 
@@ -444,7 +443,19 @@ async def webhook(request: Request):
 
     if not sender_id or not message_text:
         return {"status":"ignored"}
-
+    if sender_id in confirmed_orders:
+        if any(x in message_text for x in [
+            "الغاء",
+            "احذف",
+            "شيل",
+            "بدل",
+            "تعديل",
+            "اضافة",
+            "اضف"
+        ]):
+            pass
+        else:
+            return {"status": "ok"}
     hour = (datetime.now() + timedelta(hours=3)).hour
 
     if hour < 0 or hour >= 24:
@@ -525,6 +536,7 @@ async def webhook(request: Request):
                         break
 
                 total += price * qty
+            confirmed_orders.add(sender_id)
 
             reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعه الئ ساعتين من تأكيد الحجز"
 
