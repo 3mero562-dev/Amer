@@ -345,10 +345,10 @@ def ask_ai(msg):
 دونات نوتيلا بيضاء = 1000
 دونات فراولة = 1000
 
-موهيتو = 2500
-بلو بيري = 2500
-ليمون نعناع = 2500
-صودا = 2500
+موهيتو بلو بيري = 2500
+موهيتو ليمون نعناع = 2500
+موهيتو بلوبيري = 2500
+موهيتو صودا = 2500
 
 إذا سأل الزبون عن سعر أي منتج، اذكر السعر من هذه القائمة فقط.
 إذا لم يكن المنتج موجوداً بالقائمة فلا تخترع سعراً.
@@ -475,8 +475,18 @@ async def webhook(request: Request):
 
                 total = 2000
                 print(result)
-                for item in result["items"]:
-                    total += prices.get(item.get("name",""),0) * item.get("qty",1)
+                    for item in result["items"]:
+                name = item.get("name", "")
+                qty = item.get("qty", 1)
+
+                price = 0
+
+                for product_name, product_price in prices.items():
+            if product_name in name or name in product_name:
+                price = product_price
+            break
+
+    total += price * qty
 
 
                 reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعه الئ ساعتين من تأكيد الحجز"
