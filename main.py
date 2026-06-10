@@ -432,7 +432,7 @@ async def webhook(request: Request):
         reply = "💳 طرق الدفع المتوفرة:\n\n💠 ماستر كارد:\n917371759965\n\n📱 زين كاش:\n07868008181"
     else:
         result = ask_ai(message_text)
-            print("AI RESULT =", result)
+        print("AI RESULT =", result)
 
         if "items" in result:
 
