@@ -475,29 +475,27 @@ async def webhook(request: Request):
 
             total = 2000
             print(result)
-                for item in result["items"]:
-                    name = item.get("name", "")
-                    qty = item.get("qty", 1)
+            for item in result["items"]:
+                name = item.get("name", "")
+                qty = item.get("qty", 1)
 
-                    price = 0
-
+                price = 0
                 for product_name, product_price in prices.items():
-            if product_name in name or name in product_name:
-                price = product_price
-                break
+                    if product_name in name or name in product_name:
+                        price = product_price
+                        break
 
-                    total += price * qty
+                total += price * qty
 
+            reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعه الئ ساعتين من تأكيد الحجز"
 
-                reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعه الئ ساعتين من تأكيد الحجز"
-
-                if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-                    requests.post(
+            if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+                requests.post(
                     f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
                     json={"chat_id": TELEGRAM_CHAT_ID, "text": message_text}
                 )
         else:
-            reply = result.get("reply","")
+            reply = result.get("reply", "")
 
     requests.post(
         f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
