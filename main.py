@@ -473,20 +473,20 @@ async def webhook(request: Request):
     "موهيتو صودا": 2500
 }
 
-                total = 2000
-                print(result)
+            total = 2000
+            print(result)
                 for item in result["items"]:
                     name = item.get("name", "")
                     qty = item.get("qty", 1)
 
-                price = 0
+                    price = 0
 
                 for product_name, product_price in prices.items():
-                if product_name in name or name in product_name:
+            if product_name in name or name in product_name:
                 price = product_price
                 break
 
-                total += price * qty
+                    total += price * qty
 
 
                 reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعه الئ ساعتين من تأكيد الحجز"
