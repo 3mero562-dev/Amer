@@ -482,11 +482,11 @@ async def webhook(request: Request):
                 price = 0
 
                 for product_name, product_price in prices.items():
-            if product_name in name or name in product_name:
+                if product_name in name or name in product_name:
                 price = product_price
-            break
+                break
 
-    total += price * qty
+                total += price * qty
 
 
                 reply = f"✅ تم تثبيت طلبكم بنجاح ❤️🍪\n\n💰 السعر الكلي: {total} د.ع\n\n🚚 سيتم التوصيل خلال ساعه الئ ساعتين من تأكيد الحجز"
