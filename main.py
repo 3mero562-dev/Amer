@@ -446,7 +446,7 @@ async def webhook(request: Request):
     if message_id in processed_messages:
         return {"status": "ok"}
 
-processed_messages.add(message_id)
+    processed_messages.add(message_id)
 
     if not sender_id or not message_text:
         return {"status":"ignored"}
