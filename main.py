@@ -15,6 +15,7 @@ RENDER_URL = "https://amer-qesh.onrender.com"
 client = OpenAI(api_key=OPEN_API_KEY)
 seen_users = set()
 confirmed_orders = set()
+processed_messages = set()
 
 MENU_TEXT = """🍪❤️ هلا وغلا
 
@@ -440,6 +441,12 @@ async def webhook(request: Request):
 
     sender_id = event.get("sender",{}).get("id")
     message_text = event.get("message",{}).get("text","").strip()
+    message_id = event.get("message", {}).get("mid", "")
+
+    if message_id in processed_messages:
+        return {"status": "ok"}
+
+processed_messages.add(message_id)
 
     if not sender_id or not message_text:
         return {"status":"ignored"}
