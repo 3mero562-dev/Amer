@@ -449,6 +449,7 @@ async def webhook(request: Request):
             "احذف",
             "شيل",
             "بدل",
+            "الغي الطلب",
             "تعديل",
             "اضافة",
             "اضف"
@@ -458,7 +459,7 @@ async def webhook(request: Request):
             return {"status": "ok"}
     hour = (datetime.now() + timedelta(hours=3)).hour
 
-    if hour < 0 or hour >= 24:
+    if hour < 11 or hour >= 22:
         reply = """نعتذر منكم 🙏
 
 حالياً التوصيل متوقف، ويبدأ يومياً من الساعة 2:00 إلى 10:00 مساءً 🌙
