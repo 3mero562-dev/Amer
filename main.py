@@ -426,26 +426,6 @@ async def webhook(request: Request):
     else:
         result = ask_ai(message_text)
             print("AI RESULT =", result)
-        if isinstance(result, str) and result.startswith("IMAGE:"):
-            image_path = result.replace("IMAGE:", "")
-
-            requests.post(
-        f"https://graph.instagram.com/v23.0/me/messages?access_token={INSTAGRAM_ACCESS_TOKEN}",
-        json={
-            "recipient": {"id": sender_id},
-            "message": {
-                "attachment": {
-                    "type": "image",
-                    "payload": {
-                        "url": f"{RENDER_URL}/{image_path}"
-                    }
-                }
-            }
-        }
-    )
-
-            return {"status": "ok"}
-        print("AI RESULT =", result)
 
         if "items" in result:
 
