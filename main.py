@@ -480,7 +480,7 @@ async def webhook(request: Request):
     print("SENDER:", sender_id)
     print("TEXT:", message_text)
     if message_text.lower() == "#off":
-        manual_chat.add(sender_id)
+        manual_chat.add("2267284740461694")
         return {"status": "ok"}
 
     if message_text.lower() == "#on":
