@@ -16,6 +16,7 @@ client = OpenAI(api_key=OPEN_API_KEY)
 seen_users = set()
 confirmed_orders = set()
 processed_messages = set()
+manual_chat = set()
 
 MENU_TEXT = """🍪❤️ هلا وغلا
 
@@ -476,7 +477,16 @@ async def webhook(request: Request):
     sender_id = event.get("sender",{}).get("id")
     message_text = event.get("message",{}).get("text","").strip()
     message_id = event.get("message", {}).get("mid", "")
+    if message_text.lower() == "#off":
+        manual_chat.add(sender_id)
+    return {"status": "ok"}
 
+    if message_text.lower() == "#on":
+        manual_chat.discard(sender_id)
+        return {"status": "ok"}
+
+    if sender_id in manual_chat:
+        return {"status": "ok"}
     if message_id in processed_messages:
         return {"status": "ok"}
 
