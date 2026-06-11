@@ -480,14 +480,14 @@ async def webhook(request: Request):
     print("SENDER:", sender_id)
     print("TEXT:", message_text)
     if message_text.lower() == "#off":
-        manual_chat.add("2267284740461694")
+        manual_chat.add(sender_id)
+        print("MANUAL MODE ON:", sender_id)
         return {"status": "ok"}
 
     if message_text.lower() == "#on":
-        manual_chat.discard("2267284740461694")
+        manual_chat.discard(sender_id)
         print("MANUAL MODE OFF:", sender_id)
         return {"status": "ok"}
-
     if sender_id in manual_chat:
         print("USER STILL IN MANUAL:", sender_id)
         return {"status": "ok"}
